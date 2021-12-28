@@ -1,26 +1,20 @@
 require("background")
 life = 1
 
-
-
 game = {
-
     width = 843,
-
     height = 316,
-
     scale = 1
-
 }
 
 player = {
-  x = 0,
-  width = 129,
-  height = 128,
-  velx = 6,
-  vely = 0,
-  jump = -460,
-  gravity = -660
+    x = 0,
+    width = 129,
+    height = 128,
+    velx = 6,
+    vely = 0,
+    jump = -460,
+    gravity = -660
 }
 
 enemy = {
@@ -29,27 +23,18 @@ enemy = {
     velx = 2,
     vely = 0,
     width = 129,
-    height = 128,
+    height = 128
 }
 
 function love.load()
-
-    love.window.setMode(
-
-      game.width * game.scale,
-
-      game.height * game.scale
-
-    )
+    love.window.setMode(game.width * game.scale, game.height * game.scale)
 
     shots = {}
-    
+
     Background:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
     player.ground = player.y
-
-
 
     -- colocar imagem correta
 
@@ -62,15 +47,25 @@ function love.load()
 
     -- enemy.image:setFilter("nearest", "nearest")
 
-
-
-    -- hitSound = love.audio.newSource("hit.wav", "static")
-
-    -- hitSound:setVolume(0.4)
-
+    hitSound = love.audio.newSource("hitHurt.wav", "static")
+    hitSound:setVolume(0.4)
 end
 
+function checkCollision(a, b)
+    -- não-colisão no eixo x
+    if b.x > a.x + a.width or a.x > b.x + b.width then
 
+        return false
+    end
+
+    -- não-colisão no eixo y
+    if b.y > a.y + a.height or a.y > b.y + b.height then
+
+        return false
+    end
+
+    return true
+end
 
 function love.update(dt)
     if love.keyboard.isDown("right", "d") then
@@ -82,31 +77,37 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown("up", "w") then
-      if player.vely == 0 then
-        player.vely = player.jump
-      end
+        if player.vely == 0 then
+            player.vely = player.jump
+        end
     end
 
     if player.vely ~= 0 then
-      player.y = player.y + player.vely * dt
-      player.vely = player.vely - player.gravity * dt
+        player.y = player.y + player.vely * dt
+        player.vely = player.vely - player.gravity * dt
     end
 
     if player.y > game.height - player.height then
-      player.vely = 0
-      player.y = game.height - player.height
+        player.vely = 0
+        player.y = game.height - player.height
     end
 
     if player.x < 0 then
-      player.x = 0
+        player.x = 0
     end
 
     if player.x + player.width > game.width then
-      player.x = game.width - player.width
+        player.x = game.width - player.width
+    end
+
+    if checkCollision(player, enemy) then
+        hitSound:play()
+
+        gameover = true
     end
 
     remaining_time = remaining_time - dt
-    print("remaining_time " .. (remaining_time))
+    -- print("remaining_time " .. (remaining_time))
 
     if remaining_time <= 0 then
         gameover = true
@@ -116,18 +117,16 @@ function love.update(dt)
     Background:update(dt)
 end
 
-
-
 function love.draw()
     Background:draw()
 
     love.graphics.draw(player.sprite, player.x, player.y)
     love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
 
-    for i,v in ipairs(shots) do
-      love.graphics.rectangle("fill",v.starting_x, v.starting_y, v.width, v.height)
-      v.starting_x = v.starting_x + 4
-  end
+    for i, v in ipairs(shots) do
+        love.graphics.rectangle("fill", v.starting_x, v.starting_y, v.width, v.height)
+        v.starting_x = v.starting_x + 4
+    end
 
 end
 
@@ -138,12 +137,12 @@ function love.keypressed(key)
 end
 
 function shoot()
-  shot = { 
-    starting_x = player.x + player.width, 
-    starting_y = player.y + player.height - player.height/3,
-    width = 4, 
-    height = 4
-  }
+    shot = {
+        starting_x = player.x + player.width,
+        starting_y = player.y + player.height - player.height / 3,
+        width = 4,
+        height = 4
+    }
 
-  table.insert(shots,shot)
+    table.insert(shots, shot)
 end
