@@ -132,6 +132,12 @@ function love.update(dt)
         hitSound:play()
 
         gameover = true
+        gameoverSound:play()
+
+        -- VIR A MENSAGEM DE GANHOU
+        -- colocar som de sucesso: palmas, etc
+        -- Botão de jogar novamente
+
     end
 
     remaining_time = remaining_time - dt
@@ -139,8 +145,10 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
-        gameoverSound:play()
-        -- aqui tem que parar o jogo e fazer o perdeu
+      
+      -- tirar uma vida
+      -- fazer o if pra verificar se é a ultima vida, se for coloca o som do moises e a mesma mensagem de PERDEU
+      --
     end
 
     Background:update(dt)
