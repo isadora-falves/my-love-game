@@ -56,7 +56,7 @@ function love.load()
 
     enemy.sprite = love.graphics.newImage("sprites/dyno.png")
 
-    remaining_time = 5
+    remaining_time = 40
     gameover = false
 
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
