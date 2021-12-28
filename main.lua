@@ -89,6 +89,7 @@ function love.update(dt)
     if love.keyboard.isDown("up", "w") then
       if player.vely == 0 then
         player.vely = player.jump
+        playSound("jump")
       end
     end
 
@@ -144,10 +145,8 @@ function love.keypressed(key)
 end
 
 function shoot()
-    shotSound = love.audio.newSource("sounds/shot.wav", "static")
-    shotSound:setVolume(0.4)
-    shotSound:play()
-
+    playSound("shot")
+ 
     shot = {
         starting_x = player.x + player.width,
         starting_y = player.y + player.height - player.height/3,
@@ -156,4 +155,10 @@ function shoot()
     }
 
     table.insert(shots,shot)
+end
+
+function playSound(audio)
+  sound = love.audio.newSource("sounds/" .. audio .. ".wav", "static")
+  sound:setVolume(0.4)
+  sound:play()
 end
