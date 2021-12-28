@@ -2,29 +2,23 @@ local Background = require("background")
 local GUI = require("gui")
 life = 1
 
-
-
 game = {
-
     width = 843,
-
     height = 316,
-
     scale = 1
-
 }
 
 player = {
-  x = 0,
-  width = 129,
-  height = 128,
-  velx = 6,
-  vely = 0,
-  jump = -460,
-  gravity = -660,
-  health = {
-    current = 3	
-  }
+    x = 0,
+    width = 129,
+    height = 128,
+    velx = 6,
+    vely = 0,
+    jump = -460,
+    gravity = -660,
+    health = {
+        current = 3
+    }
 }
 
 enemy = {
@@ -33,28 +27,38 @@ enemy = {
     velx = 2,
     vely = 0,
     width = 129,
-    height = 128,
+    height = 128
 }
 
+shots = {}
+
+enemyDeath = false
+
+function checkCollision(a, b)
+    -- não-colisão no eixo x
+    if b.x > a.x + a.width or a.x > b.x + b.width then
+
+        return false
+    end
+
+    -- não-colisão no eixo y
+    if b.y > a.y + a.height or a.y > b.y + b.height then
+
+        return false
+    end
+
+    return true
+end
+
+-- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
 function love.load()
+    love.window.setMode(game.width * game.scale, game.height * game.scale)
 
-    love.window.setMode(
-
-      game.width * game.scale,
-
-      game.height * game.scale
-
-    )
-
-    shots = {}
-    
     Background:load()
     GUI:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
     player.ground = player.y
-
-
 
     -- colocar imagem correta
 
@@ -63,25 +67,22 @@ function love.load()
     remaining_time = 40
     gameover = false
 
-    -- player.image:setFilter("nearest", "nearest")
+    hit = love.audio.newSource("sounds/hit.wav", "static")
+    hit:setVolume(0.4)
 
-    -- enemy.image:setFilter("nearest", "nearest")
+    jump = love.audio.newSource("sounds/jump.wav", "static")
+    jump:setVolume(0.4)
 
-
-
-    -- hitSound = love.audio.newSource("hit.wav", "static")
-
-    -- hitSound:setVolume(0.4)
-
+    shot = love.audio.newSource("sounds/shot.wav", "static")
+    shot:setVolume(0.4)
 end
 
-
-
+-- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
     if gameover then
-      return
+        return
     end
-    
+
     if love.keyboard.isDown("right", "d") then
         player.x = player.x + player.velx
     end
@@ -90,33 +91,44 @@ function love.update(dt)
         player.x = player.x - player.velx
     end
 
+    -- pula
     if love.keyboard.isDown("up", "w") then
-      if player.vely == 0 then
-        player.vely = player.jump
-        playSound("jump")
-      end
+        if player.vely == 0 then
+            player.vely = player.jump
+
+            jump:play()
+        end
     end
 
+    -- verifica se o jogador está no jump e faz o movimento de descida
     if player.vely ~= 0 then
-      player.y = player.y + player.vely * dt
-      player.vely = player.vely - player.gravity * dt
+        player.y = player.y + player.vely * dt
+        player.vely = player.vely - player.gravity * dt
     end
 
     if player.y > game.height - player.height then
-      player.vely = 0
-      player.y = game.height - player.height
+        player.vely = 0
+        player.y = game.height - player.height
     end
 
+    -- mantém o jogador renderizando dentro da tela
     if player.x < 0 then
-      player.x = 0
+        player.x = 0
     end
 
     if player.x + player.width > game.width then
-      player.x = game.width - player.width
+        player.x = game.width - player.width
+    end
+
+    -- checa colisão entro o jogador e o inimigo
+    if checkCollision(player, enemy) then
+        hit:play()
+
+        gameover = true
     end
 
     remaining_time = remaining_time - dt
-    print("remaining_time " .. (remaining_time))
+    -- print("remaining_time " .. (remaining_time))
 
     if remaining_time <= 0 then
         gameover = true
@@ -125,47 +137,65 @@ function love.update(dt)
     end
 
     Background:update(dt)
-end
 
+    -- atualiza lista de tiros
+    for i, v in ipairs(shots) do
+        v.x = v.x + 4
 
+        -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
+        -- o ideal é depois verificar em relação a uma lista de inimigos
+        if enemyDeath == false and checkCollision(v, enemy) then
+            hit:play()
 
-function love.draw()
-    Background:draw()
-    GUI:draw(player)
+            table.remove(shots, i)
 
-    love.graphics.draw(player.sprite, player.x, player.y)
-    love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
+            enemyDeath = true
+        end
 
-    for i,v in ipairs(shots) do
-      love.graphics.rectangle("fill",v.starting_x, v.starting_y, v.width, v.height)
-      v.starting_x = v.starting_x + 4
+        -- remove tiro da listagem quando ele toca na borda da tela
+        if v.x >= game.width then
+            table.remove(shots, i)
+        end
     end
-
 end
 
+-- Atira ao clicar em 'space'
 function love.keypressed(key)
     if key == "space" then
         shoot()
     end
 end
 
-function shoot()
-    if not gameover then
-        playSound("shot")
- 
-      shot = {
-          starting_x = player.x + player.width,
-          starting_y = player.y + player.height - player.height/3,
-          width = 4,
-          height = 4
-      }
+-- Todo o código que serve pra renderizar algo fica aqui
+function love.draw()
+    Background:draw()
+    GUI:draw(player)
 
-      table.insert(shots,shot)
+    -- renderiza o jogador
+    love.graphics.draw(player.sprite, player.x, player.y)
+
+    -- renderiza inimigo se ele não estiver morto
+    if enemyDeath == false then
+        love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
+    end
+
+    -- renderiza tiros
+    for i, v in ipairs(shots) do
+        love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
     end
 end
 
-function playSound(audio)
-  sound = love.audio.newSource("sounds/" .. audio .. ".wav", "static")
-  sound:setVolume(0.4)
-  sound:play()
+function shoot()
+    if not gameover then
+        shot:play()
+
+        bullet = {
+            x = player.x + player.width,
+            y = player.y + player.height - player.height / 3,
+            width = 4,
+            height = 4
+        }
+
+        table.insert(shots, bullet)
+    end
 end
