@@ -5,8 +5,11 @@ local Player = require("player")
 
 local GUI = require("gui")
 local Enemy = require("enemy")
+local Buttons = require("buttons")
 
 life = 1
+
+StartingTime = 40
 
 game = {
   width = 843,
@@ -52,7 +55,7 @@ function love.load()
 
   GUI:load()
 
-  remaining_time = 40
+  remaining_time = StartingTime
   gameover = false
 
   hitSound = love.audio.newSource("sounds/hit.wav", "static")
@@ -73,10 +76,10 @@ end
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
   if gameover then
+    Buttons:load()
     return
   end
-
--- checa colisão entro o jogador e o inimigo
+  -- checa colisão entro o jogador e o inimigo
   Player:decrementCollisionTimeout()
   if checkCollision(Player, badguy) then
     if Player:damage() then
@@ -91,7 +94,7 @@ function love.update(dt)
     end
   end
 
-remaining_time = remaining_time - dt
+  remaining_time = remaining_time - dt
 
   if remaining_time <= 0 then
     gameover = true
@@ -132,6 +135,10 @@ function love.keypressed(key)
   if key == "space" then
       shoot()
   end
+
+  if key == "escape" then
+    love.event.quit()
+  end
 end
 
 -- Todo o código que serve pra renderizar algo fica aqui
@@ -152,6 +159,7 @@ function love.draw()
   end
 
   badguy:draw()
+  Buttons:draw()
 end
 
 function shoot()
@@ -167,4 +175,28 @@ function shoot()
 
     table.insert(shots, shot)
   end
+end
+
+function reset()
+    Player:load()
+    GUI:load(Player)
+    remaining_time =  StartingTime
+    gameover = false
+    badguy = Enemy.newEnemy(600, 410)
+    Buttons:reset()
+end
+
+function love.mousepressed(mx, my, button)
+    if button == 1 then	--checks which button was pressed, refer to [url=https://love2d.org/wiki/love.mousepressed]wiki[/url]
+        for i,v in pairs(Buttons:listButtons()) do
+            -- check collision and restrict allowed repeat click speed
+            if mx >= v[1] and mx <= v[1]+v[3] and my >= v[2] and my <= v[2] + v[4] and v[5] == 0 then
+                if i == "continue" then
+                    reset()
+                elseif i == "quit" then
+                    love.event.quit()
+                end
+            end	
+        end
+    end
 end
