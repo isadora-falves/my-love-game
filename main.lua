@@ -78,6 +78,10 @@ end
 
 
 function love.update(dt)
+    if gameover then
+      return
+    end
+    
     if love.keyboard.isDown("right", "d") then
         player.x = player.x + player.velx
     end
@@ -116,6 +120,7 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
+        playSound("gameover")
         -- aqui tem que parar o jogo e fazer o perdeu
     end
 
@@ -134,7 +139,7 @@ function love.draw()
     for i,v in ipairs(shots) do
       love.graphics.rectangle("fill",v.starting_x, v.starting_y, v.width, v.height)
       v.starting_x = v.starting_x + 4
-  end
+    end
 
 end
 
@@ -145,16 +150,18 @@ function love.keypressed(key)
 end
 
 function shoot()
-    playSound("shot")
+    if not gameover then
+        playSound("shot")
  
-    shot = {
-        starting_x = player.x + player.width,
-        starting_y = player.y + player.height - player.height/3,
-        width = 4,  
-        height = 4
-    }
+      shot = {
+          starting_x = player.x + player.width,
+          starting_y = player.y + player.height - player.height/3,
+          width = 4,
+          height = 4
+      }
 
-    table.insert(shots,shot)
+      table.insert(shots,shot)
+    end
 end
 
 function playSound(audio)
