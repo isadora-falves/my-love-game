@@ -67,14 +67,17 @@ function love.load()
     remaining_time = 40
     gameover = false
 
-    hit = love.audio.newSource("sounds/hit.wav", "static")
-    hit:setVolume(0.4)
+    hitSound = love.audio.newSource("sounds/hit.wav", "static")
+    hitSound:setVolume(0.4)
 
-    jump = love.audio.newSource("sounds/jump.wav", "static")
-    jump:setVolume(0.4)
+    jumpSound = love.audio.newSource("sounds/jump.wav", "static")
+    jumpSound:setVolume(0.4)
 
-    shot = love.audio.newSource("sounds/shot.wav", "static")
-    shot:setVolume(0.4)
+    shotSound = love.audio.newSource("sounds/shot.wav", "static")
+    shotSound:setVolume(0.4)
+
+    gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
+    gameoverSound:setVolume(0.4)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -96,7 +99,7 @@ function love.update(dt)
         if player.vely == 0 then
             player.vely = player.jump
 
-            jump:play()
+            jumpSound:play()
         end
     end
 
@@ -122,7 +125,7 @@ function love.update(dt)
 
     -- checa colisão entro o jogador e o inimigo
     if checkCollision(player, enemy) then
-        hit:play()
+        hitSound:play()
 
         gameover = true
     end
@@ -132,7 +135,7 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
-        playSound("gameover")
+        gameoverSound:play()
         -- aqui tem que parar o jogo e fazer o perdeu
     end
 
@@ -145,7 +148,7 @@ function love.update(dt)
         -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
         -- o ideal é depois verificar em relação a uma lista de inimigos
         if enemyDeath == false and checkCollision(v, enemy) then
-            hit:play()
+            hitSound:play()
 
             table.remove(shots, i)
 
@@ -187,15 +190,15 @@ end
 
 function shoot()
     if not gameover then
-        shot:play()
+        shotSound:play()
 
-        bullet = {
+        shot = {
             x = player.x + player.width,
             y = player.y + player.height - player.height / 3,
             width = 4,
             height = 4
         }
 
-        table.insert(shots, bullet)
+        table.insert(shots, shot)
     end
 end
