@@ -15,12 +15,12 @@ game = {
 }
 
 enemy = {
-    x = game.width - 258,
-    y = game.height - 128,
     velx = 2,
     vely = 0,
-    width = 129,
-    height = 128
+    width = 100,
+    height = 166,
+    x = game.width - 258,
+    y =  game.height - 166
 }
 
 shots = {}
@@ -54,7 +54,7 @@ function love.load()
 
     -- colocar imagem correta
 
-    enemy.sprite = love.graphics.newImage("sprites/parrot.png")
+    enemy.sprite = love.graphics.newImage("sprites/dyno.png")
 
     remaining_time = 5
     gameover = false
@@ -81,11 +81,18 @@ function love.update(dt)
     end
 
     -- checa colisão entro o jogador e o inimigo
+    Player:decrementCollisionTimeout()
     if checkCollision(Player, enemy) then
-        hitSound:play()
+	if Player:damage() then
+		hitSound:play()
+	end
 
-        gameover = true
-        gameoverSound:play()
+	if Player:dead() then
+		hitSound:play()
+
+		gameover = true
+		gameoverSound:play()
+	end
     end
 
     remaining_time = remaining_time - dt
@@ -136,7 +143,6 @@ end
 function love.draw()
     Background:draw()
     Player:draw()
-
     GUI:draw(Player)
 
     -- renderiza inimigo se ele não estiver morto
@@ -146,7 +152,8 @@ function love.draw()
 
     -- renderiza tiros
     for i, v in ipairs(shots) do
-        love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+	love.graphics.draw(love.graphics.newImage("sprites/shot.png"), v.x, v.y)
+        -- love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
     end
 
     badguy:draw()
@@ -158,9 +165,9 @@ function shoot()
 
         shot = {
             x = Player.x + Player.width,
-            y = Player.y + Player.height - Player.height / 3,
-            width = 4,
-            height = 4
+            y = Player.y + Player.width/3,
+            width = 2,
+            height = 2
         }
 
         table.insert(shots, shot)
