@@ -1,4 +1,5 @@
-require("background")
+local Background = require("background")
+local GUI = require("gui")
 life = 1
 
 
@@ -20,7 +21,10 @@ player = {
   velx = 6,
   vely = 0,
   jump = -460,
-  gravity = -660
+  gravity = -660,
+  health = {
+    current = 3	
+  }
 }
 
 enemy = {
@@ -45,6 +49,7 @@ function love.load()
     shots = {}
     
     Background:load()
+    GUI:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
     player.ground = player.y
@@ -120,6 +125,7 @@ end
 
 function love.draw()
     Background:draw()
+    GUI:draw(player)
 
     love.graphics.draw(player.sprite, player.x, player.y)
     love.graphics.draw(enemy.sprite, enemy.x, enemy.y)

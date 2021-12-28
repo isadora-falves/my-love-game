@@ -1,4 +1,4 @@
-Background = {}
+local Background = {}
 
 function Background:load()
   self.background_image = love.graphics.newImage("sprites/background.jpg")
@@ -20,3 +20,4 @@ function Background:draw()
   love.graphics.draw(self.background_image, self.background_x + self.background_image:getWidth(), 0)
 end
 
+return Background
