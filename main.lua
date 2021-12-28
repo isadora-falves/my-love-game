@@ -122,5 +122,4 @@ function love.draw()
 
     love.graphics.draw(player.sprite, player.x, player.y)
     love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
-
 end
