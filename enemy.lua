@@ -1,41 +1,71 @@
---enemy.lua
-local enemyTBL = {} --this will store all the functions that operate on all the enemy entities
-local enemy = {}
-local enemyClass = {}
-enemyClass.__index = function(t,i) return enemyClass[i] end --I don't know if this is necessary but I always write it
+local Enemy = {}
 
-enemyTBL.newEnemy = function(x,y) -- now the newEnemy function will be stored inside the enemyTBL table
-   local enmy = {} --temporary table to hold all the play atributes
-   enmy.x = x
-   enmy.y = y
-   enmy.width = 100
-   enmy.height = 166
-   enmy.xvel = 200
-   enmy.yvel = 0
-   enmy.friction = 1
-   enmy.speed = 2
-   setmetatable(enmy, enemyClass) --this will link all the enemyClass functions to the newly created enemy.
-   table.insert(enemy, enmy) --this will store the newly created enemy in the enemy table.
-   return enmy
+Enemy.__index = Enemy
+
+local Player = require("player")
+
+local ActiveEnemies = {}
+
+function Enemy.new(x, y)
+    local instance = setmetatable({}, Enemy)
+
+    instance.x = x
+    instance.y = y
+    instance.width = 100
+    instance.height = 100
+    instance.xvel = 200
+    instance.yvel = 0
+    instance.friction = 1
+    instance.speed = 2
+
+    table.insert(ActiveEnemies, instance)
 end
 
-function enemyClass:physics(dt)
-   self.x = self.x - self.xvel * dt
-   self.y = self.y - self.yvel * dt
-   self.xvel = self.xvel * (1 - math.min(dt*self.friction, 0))
-   self.yvel = self.yvel * (1 - math.min(dt*self.friction, 1))
+function Enemy.loadAssets()
+    Enemy.sprite = love.graphics.newImage("sprites/dyno.png")
+
+    Enemy.width = Enemy.sprite:getWidth()
+    Enemy.height = Enemy.sprite:getHeight()
+
+    hitSound = love.audio.newSource("sounds/hit.wav", "static")
+    hitSound:setVolume(0.4)
 end
 
-function enemyClass:draw()
-   love.graphics.draw(love.graphics.newImage("sprites/dyno.png"), self.x, self.y)
+function Enemy:physics(dt)
+    if self.x + self.width > 0 then
+        self.x = self.x - self.xvel * dt
+        self.y = self.y - self.yvel * dt
+        self.xvel = self.xvel * (1 - math.min(dt * self.friction, 0))
+        self.yvel = self.yvel * (1 - math.min(dt * self.friction, 1))
+    end
 end
 
--- enemyTBL functions, these will operate on all the enemy entites with a single call
-function enemyTBL.draw()
-   for i,v in ipairs(enemy) do
-      v:draw()
-   end
+function Enemy:update(dt)
+    self:physics(dt)
 end
 
---return enemyTBL instead of the old newEnemy
-return enemyTBL
+function Enemy.updateAll(dt)
+    for i, instance in ipairs(ActiveEnemies) do
+        instance:update(dt)
+    end
+end
+
+function Enemy.remove(index)
+    table.remove(ActiveEnemies, index)
+end
+
+function Enemy.getEnemies()
+    return ActiveEnemies
+end
+
+function Enemy:draw()
+    love.graphics.draw(self.sprite, self.x, self.y)
+end
+
+function Enemy.drawAll()
+    for i, instance in ipairs(ActiveEnemies) do
+        instance:draw()
+    end
+end
+
+return Enemy
