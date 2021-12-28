@@ -3,7 +3,7 @@ local Background = {}
 function Background:load()
   self.background_image = love.graphics.newImage("sprites/background.jpg")
   self.background_x = 0
-  self.background_spd = 500
+  self.background_spd = 100
 end
 
 function Background:update(dt)

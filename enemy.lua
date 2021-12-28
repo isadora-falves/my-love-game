@@ -9,7 +9,7 @@ enemyTBL.newEnemy = function(x,y) -- now the newEnemy function will be stored in
    enmy.x = x
    enmy.y = y
    enmy.width = 100
-   enmy.height = 100
+   enmy.height = 166
    enmy.xvel = 200
    enmy.yvel = 0
    enmy.friction = 1
@@ -20,15 +20,15 @@ enemyTBL.newEnemy = function(x,y) -- now the newEnemy function will be stored in
 end
 
 function enemyClass:physics(dt)
-    self.x = self.x - self.xvel * dt
-    self.y = self.y - self.yvel * dt
-    self.xvel = self.xvel * (1 - math.min(dt*self.friction, 0))
-    self.yvel = self.yvel * (1 - math.min(dt*self.friction, 1))
+   self.x = self.x - self.xvel * dt
+   self.y = self.y - self.yvel * dt
+   self.xvel = self.xvel * (1 - math.min(dt*self.friction, 0))
+   self.yvel = self.yvel * (1 - math.min(dt*self.friction, 1))
 end
 
 function enemyClass:draw()
-    love.graphics.rectangle("fill",self.x,self.y,self.width,self.height)
- end
+   love.graphics.draw(love.graphics.newImage("sprites/dyno.png"), self.x, self.y)
+end
 
 -- enemyTBL functions, these will operate on all the enemy entites with a single call
 function enemyTBL.draw()
