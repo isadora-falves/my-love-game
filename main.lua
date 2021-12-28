@@ -1,4 +1,5 @@
-require("background")
+local Background = require("background")
+local GUI = require("gui")
 life = 1
 
 game = {
@@ -14,7 +15,10 @@ player = {
     velx = 6,
     vely = 0,
     jump = -460,
-    gravity = -660
+    gravity = -660,
+    health = {
+        current = 3
+    }
 }
 
 enemy = {
@@ -51,6 +55,7 @@ function love.load()
     love.window.setMode(game.width * game.scale, game.height * game.scale)
 
     Background:load()
+    GUI:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
     player.ground = player.y
@@ -74,6 +79,10 @@ end
 
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
+    if gameover then
+        return
+    end
+
     if love.keyboard.isDown("right", "d") then
         player.x = player.x + player.velx
     end
@@ -123,6 +132,7 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
+        playSound("gameover")
         -- aqui tem que parar o jogo e fazer o perdeu
     end
 
@@ -151,14 +161,15 @@ end
 
 -- Atira ao clicar em 'space'
 function love.keypressed(key)
-  if key == "space" then
-      shoot()
-  end
+    if key == "space" then
+        shoot()
+    end
 end
 
 -- Todo o código que serve pra renderizar algo fica aqui
 function love.draw()
     Background:draw()
+    GUI:draw(player)
 
     -- renderiza o jogador
     love.graphics.draw(player.sprite, player.x, player.y)
@@ -175,14 +186,16 @@ function love.draw()
 end
 
 function shoot()
-  shot:play()
+    if not gameover then
+        shot:play()
 
-  bullet = {
-      x = player.x + player.width,
-      y = player.y + player.height - player.height / 3,
-      width = 4,
-      height = 4
-  }
+        bullet = {
+            x = player.x + player.width,
+            y = player.y + player.height - player.height / 3,
+            width = 4,
+            height = 4
+        }
 
-  table.insert(shots, bullet)
+        table.insert(shots, bullet)
+    end
 end
