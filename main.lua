@@ -1,28 +1,16 @@
--- jump *gabi
--- um inimigo ok
--- aumentar o numero de inimigos
--- movimentação do inimigo *rodrigo
--- atirar ao toque do botão (space) *luiz
--- resolver colisão - se bater no inimo = morre/perde vide
-                    -- se a bala bater = morre
--- background correndo *mat
--- 40 segundos para cada fase
--- finalização: ganhou/perdeu
-
--- evolução
-    -- criar blocos de plataforma escada/tijolo..
-    -- pontuação
-    -- aumentar vidas (3)
-    -- botão de start
-    -- som
-
-
+require("background")
 life = 1
 
+
+
 game = {
-    width = 896,
-    height = 896,
+
+    width = 843,
+
+    height = 316,
+
     scale = 1
+
 }
 
 player = {
@@ -45,28 +33,43 @@ enemy = {
 }
 
 function love.load()
+
     love.window.setMode(
+
       game.width * game.scale,
+
       game.height * game.scale
+
     )
 
-    game.background = love.graphics.newImage("sprites/background.png")
+
+    Background:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
     player.ground = player.y
 
+
+
     -- colocar imagem correta
+
     enemy.sprite = love.graphics.newImage("sprites/parrot.png")
 
     remaining_time = 40
     gameover = false
 
     -- player.image:setFilter("nearest", "nearest")
+
     -- enemy.image:setFilter("nearest", "nearest")
 
+
+
     -- hitSound = love.audio.newSource("hit.wav", "static")
+
     -- hitSound:setVolume(0.4)
+
 end
+
+
 
 function love.update(dt)
     if love.keyboard.isDown("right", "d") then
@@ -108,10 +111,15 @@ function love.update(dt)
         gameover = true
         -- aqui tem que parar o jogo e fazer o perdeu
     end
+
+    Background:update(dt)
 end
 
+
+
 function love.draw()
-    love.graphics.draw(game.background, 0, 0)
+    Background:draw()
+
     love.graphics.draw(player.sprite, player.x, player.y)
     love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
 end
