@@ -137,12 +137,16 @@ function love.keypressed(key)
 end
 
 function shoot()
+    shotSound = love.audio.newSource("sounds/shot.wav", "static")
+    shotSound:setVolume(0.4)
+    shotSound:play()
+
     shot = {
         starting_x = player.x + player.width,
-        starting_y = player.y + player.height - player.height / 3,
+        starting_y = player.y + player.height - player.height/3,
         width = 4,
         height = 4
     }
 
-    table.insert(shots, shot)
+    table.insert(shots,shot)
 end
