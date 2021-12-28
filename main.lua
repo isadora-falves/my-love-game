@@ -56,7 +56,7 @@ function love.load()
 
     enemy.sprite = love.graphics.newImage("sprites/parrot.png")
 
-    remaining_time = 40
+    remaining_time = 5
     gameover = false
 
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
@@ -66,6 +66,9 @@ function love.load()
     shotSound:setVolume(0.4)
 
     gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
+    gameoverSound:setVolume(0.4)
+
+    winSound = love.audio.newSource("sounds/win.wav", "static")
     gameoverSound:setVolume(0.4)
 
     badguy = Enemy.newEnemy(600, 410)
@@ -83,11 +86,6 @@ function love.update(dt)
 
         gameover = true
         gameoverSound:play()
-
-        -- VIR A MENSAGEM DE GANHOU
-        -- colocar som de sucesso: palmas, etc
-        -- Botão de jogar novamente
-
     end
 
     remaining_time = remaining_time - dt
@@ -95,10 +93,10 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
-
-        -- tirar uma vida
-        -- fazer o if pra verificar se é a ultima vida, se for coloca o som do moises e a mesma mensagem de PERDEU
-        --
+        -- VIR A MENSAGEM DE GANHOU
+        -- colocar o bichinho pulando
+        -- Botão de jogar novamente
+        winSound:play()
     end
 
     Background:update(dt)
