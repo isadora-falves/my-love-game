@@ -4,6 +4,7 @@ local Background = require("background")
 local Player = require("player")
 
 local GUI = require("gui")
+local Enemy = require("enemy")
 
 life = 1
 
@@ -66,6 +67,8 @@ function love.load()
 
     gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
     gameoverSound:setVolume(0.4)
+
+    badguy = Enemy.newEnemy(600, 410)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -79,6 +82,12 @@ function love.update(dt)
         hitSound:play()
 
         gameover = true
+        gameoverSound:play()
+
+        -- VIR A MENSAGEM DE GANHOU
+        -- colocar som de sucesso: palmas, etc
+        -- Botão de jogar novamente
+
     end
 
     remaining_time = remaining_time - dt
@@ -86,8 +95,10 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
-        gameoverSound:play()
-        -- aqui tem que parar o jogo e fazer o perdeu
+
+        -- tirar uma vida
+        -- fazer o if pra verificar se é a ultima vida, se for coloca o som do moises e a mesma mensagem de PERDEU
+        --
     end
 
     Background:update(dt)
@@ -112,6 +123,8 @@ function love.update(dt)
             table.remove(shots, i)
         end
     end
+
+    badguy:physics(dt)
 end
 
 -- Atira ao clicar em 'space'
@@ -137,6 +150,8 @@ function love.draw()
     for i, v in ipairs(shots) do
         love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
     end
+
+    badguy:draw()
 end
 
 function shoot()
