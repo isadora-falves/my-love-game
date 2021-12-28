@@ -42,7 +42,8 @@ function love.load()
 
     )
 
-
+    shots = {}
+    
     Background:load()
     player.sprite = love.graphics.newImage("sprites/parrot.png")
     player.y = game.height - player.height
@@ -122,4 +123,27 @@ function love.draw()
 
     love.graphics.draw(player.sprite, player.x, player.y)
     love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
+
+    for i,v in ipairs(shots) do
+      love.graphics.rectangle("fill",v.starting_x, v.starting_y, v.width, v.height)
+      v.starting_x = v.starting_x + 4
+  end
+
+end
+
+function love.keypressed(key)
+    if key == "space" then
+        shoot()
+    end
+end
+
+function shoot()
+  shot = { 
+    starting_x = player.x + player.width, 
+    starting_y = player.y + player.height - player.height/3,
+    width = 4, 
+    height = 4
+  }
+
+  table.insert(shots,shot)
 end
