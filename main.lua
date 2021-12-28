@@ -25,29 +25,24 @@ game = {
     scale = 1
 }
 
-groundLevel = game.height - 128
-
 player = {
-    ground = groundLevel,
-    x = 0,
-    y = groundLevel,
-    width = 22,
-    height = 34,
-    velx = 2,
-    vely = 68,
-    jumpVel = -40
+  x = 0,
+  width = 129,
+  height = 128,
+  velx = 6,
+  vely = 0,
+  jump = -460,
+  gravity = -660
 }
 
 enemy = {
-    x = game.width - 129,
+    x = game.width - 258,
     y = game.height - 128,
     velx = 2,
     vely = 0,
-    width = 16,
-    height = 16
+    width = 129,
+    height = 128,
 }
-
-playerCanJump = true
 
 function love.load()
     love.window.setMode(
@@ -57,6 +52,8 @@ function love.load()
 
     game.background = love.graphics.newImage("sprites/background.png")
     player.sprite = love.graphics.newImage("sprites/parrot.png")
+    player.y = game.height - player.height
+    player.ground = player.y
 
     -- colocar imagem correta
     enemy.sprite = love.graphics.newImage("sprites/parrot.png")
@@ -69,32 +66,36 @@ function love.load()
 end
 
 function love.update(dt)
-    if love.keyboard.isDown("right") then
+    if love.keyboard.isDown("right", "d") then
         player.x = player.x + player.velx
     end
 
-    if love.keyboard.isDown("left") then
+    if love.keyboard.isDown("left", "a") then
         player.x = player.x - player.velx
     end
 
-    -- verificar se existe uma tecla melhor para fazer o up/jump
-    -- if love.keyboard.isDown("up") then
-    --     player.y = player.vely
-    --     -- playerCanJump = false
-    -- end
-
-    if love.keyboard.isDown('up') and player.y == player.ground then
-        player.y = player.y - player.vely
-        -- player.yvel = player.jumpVel
-        -- player.y = player.y + player.vely
-
-        playerCanJump = false
+    if love.keyboard.isDown("up", "w") then
+      if player.vely == 0 then
+        player.vely = player.jump
+      end
     end
 
-    if playerCanJump == false then
-        player.y = player.y + player.vely
+    if player.vely ~= 0 then
+      player.y = player.y + player.vely * dt
+      player.vely = player.vely - player.gravity * dt
+    end
 
-        playerCanJump = true
+    if player.y > game.height - player.height then
+      player.vely = 0
+      player.y = game.height - player.height
+    end
+
+    if player.x < 0 then
+      player.x = 0
+    end
+
+    if player.x + player.width > game.width then
+      player.x = game.width - player.width
     end
 end
 
@@ -105,7 +106,7 @@ function love.draw()
 end
 
 -- function love.keypressed( key )
---     if love.keyboard.isDown('up') and playerCanJump then
+--     if love.keyboard.isDown("up") and playerCanJump then
 --       player.yvel = player.jumpVel
 --       playerCanJump = false
 --     end
