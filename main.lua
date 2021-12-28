@@ -26,30 +26,9 @@ enemy = {
     height = 128
 }
 
-function love.load()
-    love.window.setMode(game.width * game.scale, game.height * game.scale)
+shots = {}
 
-    shots = {}
-
-    Background:load()
-    player.sprite = love.graphics.newImage("sprites/parrot.png")
-    player.y = game.height - player.height
-    player.ground = player.y
-
-    -- colocar imagem correta
-
-    enemy.sprite = love.graphics.newImage("sprites/parrot.png")
-
-    remaining_time = 40
-    gameover = false
-
-    -- player.image:setFilter("nearest", "nearest")
-
-    -- enemy.image:setFilter("nearest", "nearest")
-
-    hitSound = love.audio.newSource("hitHurt.wav", "static")
-    hitSound:setVolume(0.4)
-end
+enemyDeath = false
 
 function checkCollision(a, b)
     -- não-colisão no eixo x
@@ -67,6 +46,33 @@ function checkCollision(a, b)
     return true
 end
 
+-- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
+function love.load()
+    love.window.setMode(game.width * game.scale, game.height * game.scale)
+
+    Background:load()
+    player.sprite = love.graphics.newImage("sprites/parrot.png")
+    player.y = game.height - player.height
+    player.ground = player.y
+
+    -- colocar imagem correta
+
+    enemy.sprite = love.graphics.newImage("sprites/parrot.png")
+
+    remaining_time = 40
+    gameover = false
+
+    hit = love.audio.newSource("sounds/hit.wav", "static")
+    hit:setVolume(0.4)
+
+    jump = love.audio.newSource("sounds/jump.wav", "static")
+    jump:setVolume(0.4)
+
+    shot = love.audio.newSource("sounds/shot.wav", "static")
+    shot:setVolume(0.4)
+end
+
+-- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
     if love.keyboard.isDown("right", "d") then
         player.x = player.x + player.velx
@@ -76,13 +82,16 @@ function love.update(dt)
         player.x = player.x - player.velx
     end
 
+    -- pula
     if love.keyboard.isDown("up", "w") then
-      if player.vely == 0 then
-        player.vely = player.jump
-        playSound("jump")
-      end
+        if player.vely == 0 then
+            player.vely = player.jump
+
+            jump:play()
+        end
     end
 
+    -- verifica se o jogador está no jump e faz o movimento de descida
     if player.vely ~= 0 then
         player.y = player.y + player.vely * dt
         player.vely = player.vely - player.gravity * dt
@@ -93,6 +102,7 @@ function love.update(dt)
         player.y = game.height - player.height
     end
 
+    -- mantém o jogador renderizando dentro da tela
     if player.x < 0 then
         player.x = 0
     end
@@ -101,8 +111,9 @@ function love.update(dt)
         player.x = game.width - player.width
     end
 
+    -- checa colisão entro o jogador e o inimigo
     if checkCollision(player, enemy) then
-        hitSound:play()
+        hit:play()
 
         gameover = true
     end
@@ -116,42 +127,62 @@ function love.update(dt)
     end
 
     Background:update(dt)
+
+    -- atualiza lista de tiros
+    for i, v in ipairs(shots) do
+        v.x = v.x + 4
+
+        -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
+        -- o ideal é depois verificar em relação a uma lista de inimigos
+        if enemyDeath == false and checkCollision(v, enemy) then
+            hit:play()
+
+            table.remove(shots, i)
+
+            enemyDeath = true
+        end
+
+        -- remove tiro da listagem quando ele toca na borda da tela
+        if v.x >= game.width then
+            table.remove(shots, i)
+        end
+    end
 end
 
+-- Atira ao clicar em 'space'
+function love.keypressed(key)
+  if key == "space" then
+      shoot()
+  end
+end
+
+-- Todo o código que serve pra renderizar algo fica aqui
 function love.draw()
     Background:draw()
 
+    -- renderiza o jogador
     love.graphics.draw(player.sprite, player.x, player.y)
-    love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
 
-    for i, v in ipairs(shots) do
-        love.graphics.rectangle("fill", v.starting_x, v.starting_y, v.width, v.height)
-        v.starting_x = v.starting_x + 4
+    -- renderiza inimigo se ele não estiver morto
+    if enemyDeath == false then
+        love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
     end
 
-end
-
-function love.keypressed(key)
-    if key == "space" then
-        shoot()
+    -- renderiza tiros
+    for i, v in ipairs(shots) do
+        love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
     end
 end
 
 function shoot()
-    playSound("shot")
+  shot:play()
 
-    shot = {
-        starting_x = player.x + player.width,
-        starting_y = player.y + player.height - player.height/3,
-        width = 4,
-        height = 4
-    }
+  bullet = {
+      x = player.x + player.width,
+      y = player.y + player.height - player.height / 3,
+      width = 4,
+      height = 4
+  }
 
-    table.insert(shots,shot)
-end
-
-function playSound(audio)
-  sound = love.audio.newSource("sounds/" .. audio .. ".wav", "static")
-  sound:setVolume(0.4)
-  sound:play()
+  table.insert(shots, bullet)
 end
