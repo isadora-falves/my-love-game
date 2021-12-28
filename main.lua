@@ -5,31 +5,38 @@ local Enemy = require("enemy")
 life = 1
 
 game = {
-    width = 843,
-    height = 316,
-    scale = 1
+	width = 843,
+	height = 316,
+	scale = 1
 }
 
 player = {
-    x = 0,
-    width = 129,
-    height = 128,
-    velx = 6,
-    vely = 0,
-    jump = -460,
-    gravity = -660,
-    health = {
-        current = 3
-    }
+	x = 0,
+	width = 100,
+	height = 110,
+	velx = 6,
+	vely = 0,
+	jump = -460,
+	gravity = -660,
+	colors = {
+		red = 1,
+		blue = 1,
+		green = 1,
+		speed = 2
+	},
+	health = {
+		current = 3
+	},
+	collission_timeout = 1
 }
 
 enemy = {
-    x = game.width - 258,
-    y = game.height - 128,
-    velx = 2,
-    vely = 0,
-    width = 129,
-    height = 128
+	x = game.width - 258,
+	y = game.height - 166,
+	velx = 2,
+	vely = 0,
+	width = 100,
+	height = 166
 }
 
 shots = {}
@@ -37,176 +44,204 @@ shots = {}
 enemyDeath = false
 
 function checkCollision(a, b)
-    -- não-colisão no eixo x
-    if b.x > a.x + a.width or a.x > b.x + b.width then
+	-- não-colisão no eixo x
+	if b.x > a.x + a.width or a.x > b.x + b.width then
 
-        return false
-    end
+		return false
+	end
 
-    -- não-colisão no eixo y
-    if b.y > a.y + a.height or a.y > b.y + b.height then
+	-- não-colisão no eixo y
+	if b.y > a.y + a.height or a.y > b.y + b.height then
 
-        return false
-    end
+		return false
+	end
 
-    return true
+	return true
 end
 
 -- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
 function love.load()
-    love.window.setMode(game.width * game.scale, game.height * game.scale)
+	love.window.setMode(game.width * game.scale, game.height * game.scale)
 
-    Background:load()
-    GUI:load()
-    player.sprite = love.graphics.newImage("sprites/parrot.png")
-    player.y = game.height - player.height
-    player.ground = player.y
+	Background:load()
+	GUI:load()
+	player.sprite = love.graphics.newImage("sprites/player.jpg")
+	player.y = game.height - player.height
+	player.ground = player.y
 
-    -- colocar imagem correta
+	-- colocar imagem correta
 
-    enemy.sprite = love.graphics.newImage("sprites/parrot.png")
+	enemy.sprite = love.graphics.newImage("sprites/dyno.jpg")
 
-    remaining_time = 40
-    gameover = false
+	remaining_time = 40
+	gameover = false
 
-    hitSound = love.audio.newSource("sounds/hit.wav", "static")
-    hitSound:setVolume(0.4)
+	hitSound = love.audio.newSource("sounds/hit.wav", "static")
+	hitSound:setVolume(0.4)
 
-    jumpSound = love.audio.newSource("sounds/jump.wav", "static")
-    jumpSound:setVolume(0.4)
+	jumpSound = love.audio.newSource("sounds/jump.wav", "static")
+	jumpSound:setVolume(0.4)
 
-    shotSound = love.audio.newSource("sounds/shot.wav", "static")
-    shotSound:setVolume(0.4)
+	shotSound = love.audio.newSource("sounds/shot.wav", "static")
+	shotSound:setVolume(0.4)
 
-    gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
-    gameoverSound:setVolume(0.4)
+	gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
+	gameoverSound:setVolume(0.4)
 
-    badguy = Enemy.newEnemy(600, 410)
+	badguy = Enemy.newEnemy(600, 410)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
-    if gameover then
-        return
-    end
+	if gameover then
+		return
+	end
 
-    if love.keyboard.isDown("right", "d") then
-        player.x = player.x + player.velx
-    end
+	if love.keyboard.isDown("right", "d") then
+		player.x = player.x + player.velx
+	end
 
-    if love.keyboard.isDown("left", "a") then
-        player.x = player.x - player.velx
-    end
+	if love.keyboard.isDown("left", "a") then
+		player.x = player.x - player.velx
+	end
 
-    -- pula
-    if love.keyboard.isDown("up", "w") then
-        if player.vely == 0 then
-            player.vely = player.jump
+	-- pula
+	if love.keyboard.isDown("up", "w") then
+		if player.vely == 0 then
+			player.vely = player.jump
 
-            jumpSound:play()
-        end
-    end
+			jumpSound:play()
+		end
+	end
 
-    -- verifica se o jogador está no jump e faz o movimento de descida
-    if player.vely ~= 0 then
-        player.y = player.y + player.vely * dt
-        player.vely = player.vely - player.gravity * dt
-    end
+	-- verifica se o jogador está no jump e faz o movimento de descida
+	if player.vely ~= 0 then
+		player.y = player.y + player.vely * dt
+		player.vely = player.vely - player.gravity * dt
+	end
 
-    if player.y > game.height - player.height then
-        player.vely = 0
-        player.y = game.height - player.height
-    end
+	if player.y > game.height - player.height then
+		player.vely = 0
+		player.y = game.height - player.height
+	end
 
-    -- mantém o jogador renderizando dentro da tela
-    if player.x < 0 then
-        player.x = 0
-    end
+	-- mantém o jogador renderizando dentro da tela
+	if player.x < 0 then
+		player.x = 0
+	end
 
-    if player.x + player.width > game.width then
-        player.x = game.width - player.width
-    end
+	if player.x + player.width > game.width then
+		player.x = game.width - player.width
+	end
 
-    -- checa colisão entro o jogador e o inimigo
-    if checkCollision(player, enemy) then
-        hitSound:play()
+	untintPlayer(player, dt)
+	-- checa colisão entro o jogador e o inimigo
+	if checkCollision(player, enemy) then
+		damagePlayer(player)
+	end
 
-        gameover = true
-    end
+	remaining_time = remaining_time - dt
+	-- print("remaining_time " .. (remaining_time))
 
-    remaining_time = remaining_time - dt
-    -- print("remaining_time " .. (remaining_time))
+	if remaining_time <= 0 then
+		gameover = true
+		gameoverSound:play()
+		-- aqui tem que parar o jogo e fazer o perdeu
+	end
 
-    if remaining_time <= 0 then
-        gameover = true
-        gameoverSound:play()
-        -- aqui tem que parar o jogo e fazer o perdeu
-    end
+	Background:update(dt)
 
-    Background:update(dt)
+	-- atualiza lista de tiros
+	for i, v in ipairs(shots) do
+		v.x = v.x + 4
 
-    -- atualiza lista de tiros
-    for i, v in ipairs(shots) do
-        v.x = v.x + 4
+		-- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
+		-- o ideal é depois verificar em relação a uma lista de inimigos
+		if enemyDeath == false and checkCollision(v, enemy) then
+			hitSound:play()
 
-        -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
-        -- o ideal é depois verificar em relação a uma lista de inimigos
-        if enemyDeath == false and checkCollision(v, enemy) then
-            hitSound:play()
+			table.remove(shots, i)
 
-            table.remove(shots, i)
+			enemyDeath = true
+		end
 
-            enemyDeath = true
-        end
+		-- remove tiro da listagem quando ele toca na borda da tela
+		if v.x >= game.width then
+			table.remove(shots, i)
+		end
+	end
 
-        -- remove tiro da listagem quando ele toca na borda da tela
-        if v.x >= game.width then
-            table.remove(shots, i)
-        end
-    end
-
-    badguy:physics(dt)
+	badguy:physics(dt)
 end
 
 -- Atira ao clicar em 'space'
 function love.keypressed(key)
-    if key == "space" then
-        shoot()
-    end
+	if key == "space" then
+		shoot()
+	end
 end
 
 -- Todo o código que serve pra renderizar algo fica aqui
 function love.draw()
-    Background:draw()
-    GUI:draw(player)
+	Background:draw()
+	GUI:draw(player)
 
-    -- renderiza o jogador
-    love.graphics.draw(player.sprite, player.x, player.y)
+	-- renderiza o jogador
+	love.graphics.setColor(player.colors.red, player.colors.green, player.colors.blue, 1)
+	love.graphics.draw(player.sprite, player.x, player.y)
+	love.graphics.setColor(1, 1, 1, 1)
 
-    -- renderiza inimigo se ele não estiver morto
-    if enemyDeath == false then
-        love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
-    end
+	-- renderiza inimigo se ele não estiver morto
+	if enemyDeath == false then
+		love.graphics.draw(enemy.sprite, enemy.x, enemy.y)
+	end
 
-    -- renderiza tiros
-    for i, v in ipairs(shots) do
-        love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
-    end
+	-- renderiza tiros
+	for i, v in ipairs(shots) do
+		love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+	end
 
-    badguy:draw()
+	badguy:draw()
 end
 
 function shoot()
-    if not gameover then
-        shotSound:play()
+	if not gameover then
+		shotSound:play()
 
-        shot = {
-            x = player.x + player.width,
-            y = player.y + player.height - player.height / 3,
-            width = 4,
-            height = 4
-        }
+		shot = {
+			x = player.x + player.width,
+			y = player.y + player.height - player.height / 3,
+			width = 4,
+			height = 4
+		}
 
-        table.insert(shots, shot)
-    end
+		table.insert(shots, shot)
+	end
+end
+
+function damagePlayer(player)
+		player.collission_timeout = player.collission_timeout - 1
+		if player.collission_timeout == 0 then
+			hitSound:play()
+			player.collission_timeout = 40
+			player.health.current = player.health.current - 1
+			tintPlayerRed(player)
+			if player.health.current == 0 then
+				gameover = true
+				gameoverSound:play()
+			end
+		end
+end
+
+function tintPlayerRed(player)
+	player.colors.green = 0
+	player.colors.blue = 0
+end
+
+function untintPlayer(player, dt)
+	speed = player.colors.speed
+	colors = player.colors
+	colors.green = math.min(colors.green + speed * dt, 1)
+	colors.blue = math.min(colors.blue + speed * dt, 1)
+	colors.red = math.min(colors.red + speed * dt, 1)
 end
