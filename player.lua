@@ -10,6 +10,7 @@ function Player:load()
     self.height = 128
     self.x = 0
     self.y = love.graphics.getHeight() - self.height
+    self.ground = self.y
     self.velx = 6
     self.vely = 0
     self.jumpAmount = -460
@@ -22,6 +23,7 @@ end
 function Player:update(dt)
     self:move()
     self:jump(dt)
+    self:fall(dt)
 end
 
 function Player:move()
@@ -50,15 +52,23 @@ function Player:jump(dt)
             jumpSound:play()
         end
     end
+end
 
+function Player:fall(dt)
     if self.vely ~= 0 then
         self.y = self.y + self.vely * dt
         self.vely = self.vely - self.gravity * dt
     end
 
-    if self.y > love.graphics.getHeight() - self.height then
+    if self.y > self.ground then
         self.vely = 0
-        self.y = love.graphics.getHeight() - self.height
+        self.y = self.ground
+    end
+end
+
+function Player:happy(dt)
+    if self.vely == 0 then
+        self.vely = -200
     end
 end
 
