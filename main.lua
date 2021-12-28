@@ -1,5 +1,7 @@
 local Background = require("background")
 local GUI = require("gui")
+local enemy = require("enemy")
+
 life = 1
 
 game = {
@@ -78,6 +80,8 @@ function love.load()
 
     gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
     gameoverSound:setVolume(0.4)
+
+    badguy = enemy:newEnemy(600, 410)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -160,6 +164,8 @@ function love.update(dt)
             table.remove(shots, i)
         end
     end
+
+    badguy:physics(dt)
 end
 
 -- Atira ao clicar em 'space'
@@ -186,6 +192,8 @@ function love.draw()
     for i, v in ipairs(shots) do
         love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
     end
+
+    badguy:draw()
 end
 
 function shoot()
