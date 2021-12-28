@@ -6,6 +6,10 @@ local Player = require("player")
 
 local ActiveEnemies = {}
 
+function Enemy.removeAll()
+    ActiveEnemies = {}
+end
+
 function Enemy.new(x, y)
     local instance = setmetatable({}, Enemy)
 
@@ -26,9 +30,6 @@ function Enemy.loadAssets()
 
     Enemy.width = Enemy.sprite:getWidth()
     Enemy.height = Enemy.sprite:getHeight()
-
-    hitSound = love.audio.newSource("sounds/hit.wav", "static")
-    hitSound:setVolume(0.4)
 end
 
 function Enemy:physics(dt)

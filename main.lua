@@ -5,6 +5,7 @@ local Player = require("player")
 
 local GUI = require("gui")
 local Enemy = require("enemy")
+local Shot = require("shot")
 local Buttons = require("buttons")
 
 life = 1
@@ -16,19 +17,6 @@ game = {
     height = 316,
     scale = 1
 }
-
-enemy = {
-    velx = 2,
-    vely = 0,
-    width = 100,
-    height = 166,
-    x = game.width - 258,
-    y = game.height - 166
-}
-
-shots = {}
-
-enemyDeath = false
 
 function checkCollision(a, b)
     -- não-colisão no eixo x
@@ -53,6 +41,7 @@ function love.load()
     Background:load()
     Player:load()
     Enemy.loadAssets()
+    Shot.loadAssets()
 
     GUI:load()
 
@@ -62,14 +51,11 @@ function love.load()
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
     hitSound:setVolume(0.4)
 
-    shotSound = love.audio.newSource("sounds/shot.wav", "static")
-    shotSound:setVolume(0.4)
-
     gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
     gameoverSound:setVolume(0.4)
 
     winSound = love.audio.newSource("sounds/win.wav", "static")
-    gameoverSound:setVolume(0.4)
+    winSound:setVolume(0.4)
 
     Enemy.new(game.width, game.height - 166)
 end
@@ -112,28 +98,24 @@ function love.update(dt)
     Background:update(dt)
     Player:update(dt)
     Enemy.updateAll(dt)
+    Shot.updateAll(dt)
 
-    -- atualiza lista de tiros
-    for i, v in ipairs(shots) do
-        v.x = v.x + 4
-
-        for pos, enemy in ipairs(Enemy.getEnemies()) do
-            if checkCollision(v, enemy) then
+    for shotIndex, shot in ipairs(Shot.getShots()) do
+        for enemyIndex, enemy in ipairs(Enemy.getEnemies()) do
+            if checkCollision(shot, enemy) then
                 hitSound:play()
 
-                table.remove(shots, i)
+                Shot.remove(shotIndex)
 
-                Enemy.remove(pos)
+                Enemy.remove(enemyIndex)
             end
         end
 
         -- remove tiro da listagem quando ele toca na borda da tela
-        if v.x >= game.width then
-            table.remove(shots, i)
+        if shot.x >= game.width then
+            Shot.remove(shotIndex)
         end
     end
-
-    -- Enemy:physics(dt)
 end
 
 -- Atira ao clicar em 'space'
@@ -152,29 +134,16 @@ function love.draw()
     Background:draw()
     Player:draw()
     Enemy.drawAll()
+    Shot.drawAll()
 
     GUI:draw(Player)
-
-    -- renderiza tiros
-    for i, v in ipairs(shots) do
-        love.graphics.draw(love.graphics.newImage("sprites/shot.png"), v.x, v.y)
-    end
 
     Buttons:draw()
 end
 
 function shoot()
     if not gameover then
-        shotSound:play()
-
-        shot = {
-            x = Player.x + Player.width,
-            y = Player.y + Player.width / 3,
-            width = 2,
-            height = 2
-        }
-
-        table.insert(shots, shot)
+        Shot.new(Player.x + Player.width, Player.y + Player.width / 3)
     end
 end
 
@@ -183,7 +152,7 @@ function reset()
     GUI:load(Player)
     remaining_time = StartingTime
     gameover = false
-    -- badguy = Enemy.newEnemy(600, 410)
+    Enemy.removeAll()
     Buttons:reset()
 end
 

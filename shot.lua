@@ -1,41 +1,58 @@
-local Spot = {
-    img = love.graphics.newImage("assets/spike.png")
-}
+local Shot = {}
 
 Shot.__index = Shot
 
-Shot.width = Shot.img:getWidth()
-Shot.height = Shot.img:getHeight()
-
 local ActiveShots = {}
+
 local Player = require("player")
 
 function Shot.new(x, y)
+    shotSound:play()
+
     local instance = setmetatable({}, Shot)
+
     instance.x = x
     instance.y = y
-
-    self.sprite = love.graphics.newImage("sprites/shot.png")
 
     table.insert(ActiveShots, instance)
 end
 
-function Spike:update(dt)
+function Shot.loadAssets()
+    Shot.sprite = love.graphics.newImage("sprites/shot.png")
 
+    Shot.width = Shot.sprite:getWidth()
+    Shot.height = Shot.sprite:getHeight()
+
+    shotSound = love.audio.newSource("sounds/shot.wav", "static")
+    shotSound:setVolume(0.4)
 end
 
-function Spike:draw()
-    love.graphics.draw(self.img, self.x, self.y, 0, 1, 1, self.width / 2, self.height / 2)
+function Shot:update(dt)
+    self.x = self.x + 4
 end
 
-function Spike.updateAll(dt)
-    for i, instance in ipairs(ActiveSpikes) do
+function Shot:draw()
+    love.graphics.draw(self.sprite, self.x, self.y)
+end
+
+function Shot.getShots()
+    return ActiveShots
+end
+
+function Shot.remove(index)
+    table.remove(ActiveShots, index)
+end
+
+function Shot.updateAll(dt)
+    for i, instance in ipairs(ActiveShots) do
         instance:update(dt)
     end
 end
 
-function Spike.drawAll()
-    for i, instance in ipairs(ActiveSpikes) do
+function Shot.drawAll()
+    for i, instance in ipairs(ActiveShots) do
         instance:draw()
     end
 end
+
+return Shot
