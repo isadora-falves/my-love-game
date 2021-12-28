@@ -5,8 +5,11 @@ local Player = require("player")
 
 local GUI = require("gui")
 local Enemy = require("enemy")
+local Buttons = require("buttons")
 
 life = 1
+
+StartingTime = 40
 
 game = {
     width = 843,
@@ -53,7 +56,7 @@ function love.load()
 
     GUI:load()
 
-    remaining_time = 40
+    remaining_time = StartingTime
     gameover = false
 
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
@@ -74,6 +77,7 @@ end
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
     if gameover then
+        Buttons:load()
         return
     end
 
@@ -137,6 +141,10 @@ function love.keypressed(key)
     if key == "space" then
         shoot()
     end
+
+    if key == "escape" then
+        love.event.quit()
+    end
 end
 
 -- Todo o código que serve pra renderizar algo fica aqui
@@ -151,6 +159,8 @@ function love.draw()
     for i, v in ipairs(shots) do
         love.graphics.draw(love.graphics.newImage("sprites/shot.png"), v.x, v.y)
     end
+
+    Buttons:draw()
 end
 
 function shoot()
@@ -165,5 +175,29 @@ function shoot()
         }
 
         table.insert(shots, shot)
+    end
+end
+
+function reset()
+    Player:load()
+    GUI:load(Player)
+    remaining_time = StartingTime
+    gameover = false
+    -- badguy = Enemy.newEnemy(600, 410)
+    Buttons:reset()
+end
+
+function love.mousepressed(mx, my, button)
+    if button == 1 then -- checks which button was pressed, refer to [url=https://love2d.org/wiki/love.mousepressed]wiki[/url]
+        for i, v in pairs(Buttons:listButtons()) do
+            -- check collision and restrict allowed repeat click speed
+            if mx >= v[1] and mx <= v[1] + v[3] and my >= v[2] and my <= v[2] + v[4] and v[5] == 0 then
+                if i == "continue" then
+                    reset()
+                elseif i == "quit" then
+                    love.event.quit()
+                end
+            end
+        end
     end
 end
