@@ -1,6 +1,6 @@
 local Background = require("background")
 local GUI = require("gui")
-local enemy = require("enemy")
+local Enemy = require("enemy")
 
 life = 1
 
@@ -81,7 +81,7 @@ function love.load()
     gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
     gameoverSound:setVolume(0.4)
 
-    badguy = enemy:newEnemy(600, 410)
+    badguy = Enemy.newEnemy(600, 410)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
