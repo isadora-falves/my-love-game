@@ -72,59 +72,59 @@ end
 
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
-if gameover then
-  return
-end
+  if gameover then
+    return
+  end
 
 -- checa colisão entro o jogador e o inimigo
-Player:decrementCollisionTimeout()
-if checkCollision(Player, badguy) then
-  if Player:damage() then
-    hitSound:play()
-  end
+  Player:decrementCollisionTimeout()
+  if checkCollision(Player, badguy) then
+    if Player:damage() then
+      hitSound:play()
+    end
 
-  if Player:dead() then
-    hitSound:play()
+    if Player:dead() then
+      hitSound:play()
 
-    gameover = true
-    gameoverSound:play()
+      gameover = true
+      gameoverSound:play()
+    end
   end
-end
 
 remaining_time = remaining_time - dt
 
-if remaining_time <= 0 then
-  gameover = true
-  -- VIR A MENSAGEM DE GANHOU
-  -- colocar o bichinho pulando
-  -- Botão de jogar novamente
-  winSound:play()
-end
-
-Background:update(dt)
-Player:update(dt)
-
--- atualiza lista de tiros
-for i, v in ipairs(shots) do
-  v.x = v.x + 4
-
-  -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
-  -- o ideal é depois verificar em relação a uma lista de inimigos
-  if enemyDeath == false and checkCollision(v, badguy) then
-    hitSound:play()
-
-    table.remove(shots, i)
-
-    enemyDeath = true
+  if remaining_time <= 0 then
+    gameover = true
+    -- VIR A MENSAGEM DE GANHOU
+    -- colocar o bichinho pulando
+    -- Botão de jogar novamente
+    winSound:play()
   end
 
-  -- remove tiro da listagem quando ele toca na borda da tela
-  if v.x >= game.width then
-    table.remove(shots, i)
-  end
-end
+  Background:update(dt)
+  Player:update(dt)
 
-badguy:physics(dt)
+  -- atualiza lista de tiros
+  for i, v in ipairs(shots) do
+    v.x = v.x + 4
+
+    -- verifica se existe algum inimigo e se há colisão entre a bala e o inimigo
+    -- o ideal é depois verificar em relação a uma lista de inimigos
+    if enemyDeath == false and checkCollision(v, badguy) then
+      hitSound:play()
+
+      table.remove(shots, i)
+
+      enemyDeath = true
+    end
+
+    -- remove tiro da listagem quando ele toca na borda da tela
+    if v.x >= game.width then
+      table.remove(shots, i)
+    end
+  end
+
+  badguy:physics(dt)
 end
 
 -- Atira ao clicar em 'space'
@@ -159,10 +159,10 @@ function shoot()
     shotSound:play()
 
     shot = {
-        x = Player.x + Player.width,
-        y = Player.y + Player.width/3,
-        width = 2,
-        height = 2
+      x = Player.x + Player.width,
+      y = Player.y + Player.width/3,
+      width = 2,
+      height = 2
     }
 
     table.insert(shots, shot)
