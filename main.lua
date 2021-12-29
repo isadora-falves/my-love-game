@@ -57,6 +57,10 @@ function love.update(dt)
 
         return
     end
+
+    --evitar que o jogo fique muito rápido
+    dt = math.min(dt, 1/60)
+
     if Game:gameFinished() then
         Buttons:load()
         theme:stop()
