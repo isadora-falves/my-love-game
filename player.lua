@@ -16,7 +16,8 @@ function Player:load()
 	self.jumpAmount = -460
 	self.gravity = -660
 	self.health = {
-		current = 3
+		current = 3,
+		maxHealth = 5
 	}
 
 	self.colors = {
@@ -93,10 +94,23 @@ function Player:tintRed()
 	self.colors.blue = 0
 end
 
-function Player:damage(enemy)
-	self.health.current = self.health.current - enemy.damage
+function Player:tintGreen()
+	self.colors.red = 0
+	self.colors.blue = 0
+end
 
-	self:tintRed()
+function Player:damage(enemy)
+	if self.health.current == self.health.maxHealth and enemy.damage <= 0 then
+		return
+	else
+		self.health.current = self.health.current - enemy.damage
+
+		if enemy.damage >= 0 then
+			self:tintRed()
+		else
+			self:tintGreen()
+		end
+	end
 end
 
 function Player:dead()
@@ -112,6 +126,12 @@ function Player:untintPlayer(dt)
 	colors.green = math.min(colors.green + speed * dt, 1)
 	colors.blue = math.min(colors.blue + speed * dt, 1)
 	colors.red = math.min(colors.red + speed * dt, 1)
+end
+
+function Player:notOnMaxHealth()
+	local notMaxHealth = self.health.current ~= self.health.maxHealth
+
+	return notMaxHealth
 end
 
 return Player

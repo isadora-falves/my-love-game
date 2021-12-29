@@ -18,7 +18,8 @@ local EnemiesList = {
 		speed = 4,
 		damage = 2,
 		sprite = "sprites/dyno.png",
-		points = 10
+		points = 10,
+		fly = false
 	},
 	miniDyno = {
 		xvel = 500,
@@ -26,7 +27,8 @@ local EnemiesList = {
 		friction = 1,
 		speed = 10,
 		damage = 1,
-		sprite = "sprites/miniDyno.png"
+		sprite = "sprites/miniDyno.png",
+		fly = false
 	},
 	triceratops = {
 		xvel = 300,
@@ -35,7 +37,18 @@ local EnemiesList = {
 		speed = 3,
 		damage = 3,
 		sprite = "sprites/triceratops.png",
-		points = 30
+		points = 30,
+		fly = false
+	},
+	health = {
+		xvel = 600,
+		yvel = 10,
+		friction = 1,
+		speed = 8,
+		damage = -1,
+		sprite = "sprites/beer.png",
+		points = 0,
+		fly = true
 	}
 }
 
@@ -56,8 +69,13 @@ function Enemy.new(x, y)
 	instance.sprite = love.graphics.newImage(enemy.sprite)
 	instance.width = instance.sprite:getWidth()
 	instance.height = instance.sprite:getHeight()
+	instance.fly = enemy.fly
 	instance.x = x
-	instance.y = y - instance.height
+	if instance.fly then
+		instance.y = y - instance.height - math.random(0, Game.height)
+	else
+		instance.y = y - instance.height
+	end
 	instance.xvel = enemy.xvel
 	instance.yvel = enemy.yvel
 	instance.friction = enemy.friction
@@ -80,7 +98,11 @@ end
 
 function Enemy:collision(dt)
 	if utils.check_collision(Player, self) and not self.crashed then
-		hitSound:play()
+		if self.damage >= 0 then
+			hitSound:play()
+		elseif Player:notOnMaxHealth() then
+			powerUp:play()
+		end
 
 		Player:damage(self)
 
@@ -98,6 +120,9 @@ function Enemy:update(dt)
 	self:physics(dt)
 	self:collision(dt)
 end
+
+
+
 
 function Enemy.updateAll(dt)
 	timer = timer + dt

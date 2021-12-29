@@ -44,6 +44,9 @@ function love.load()
 	hitSound = love.audio.newSource("sounds/hit.wav", "static")
 	hitSound:setVolume(0.4)
 
+	powerUp = love.audio.newSource("sounds/powerUp.wav", "static")
+	powerUp:setVolume(0.4)
+
 	gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
 	gameoverSound:setVolume(0.4)
 
@@ -79,6 +82,7 @@ function love.update(dt)
 
     for shotIndex, shot in ipairs(Shot.getShots()) do
         for enemyIndex, enemy in ipairs(Enemy.getEnemies()) do
+					if enemy.damage >= 0 then
             if utils.check_collision(shot, enemy) then
                 hitSound:play()
 
@@ -87,6 +91,7 @@ function love.update(dt)
                 Enemy.remove(enemyIndex)
                 Game:addScore(enemy.points)
             end
+					end
         end
 
         -- remove tiro da listagem quando ele toca na borda da tela
