@@ -1,5 +1,7 @@
 local Buttons = {}
 
+local scale = 2
+
 local graphic = {
    width = love.graphics.getWidth(),
    height = love.graphics.getHeight()
@@ -15,16 +17,16 @@ local sprites = {
 
 function Buttons:start()
    self.buttons = {
-      logo = {graphic.width/3 - 50, (graphic.height/10)*2 - 100, sprites.logo:getWidth(), sprites.logo:getHeight()},
-      play = {graphic.width/3 + 30, (graphic.height/10)*2 + 30, sprites.play:getWidth(), sprites.play:getHeight()}
+      logo = {graphic.width/scale - 80, (graphic.height/10)*2 - 100, sprites.logo:getWidth(), sprites.logo:getHeight()},
+      play = {graphic.width/scale, (graphic.height/10)*2 + 30, sprites.play:getWidth(), sprites.play:getHeight()}
    }
 end
 
 function Buttons:load()
    self.buttons = {
-      playagain = {graphic.width/3 + 30, (graphic.height/10)*2 - 100, sprites.playagain:getWidth(), sprites.playagain:getHeight()},
-      continue = {graphic.width/3 - 30, (graphic.height/10)*2, 144, sprites.continue:getWidth(), sprites.continue:getHeight()},
-      quit = {(graphic.width/3) + 180, (graphic.height/10)*2, sprites.quit:getWidth(), sprites.quit:getHeight()}
+      playagain = {graphic.width/scale, (graphic.height/10)*2 - 100, sprites.playagain:getWidth(), sprites.playagain:getHeight()},
+      continue = {graphic.width/scale - 60, (graphic.height/10)*2, 144, sprites.continue:getWidth(), sprites.continue:getHeight()},
+      quit = {(graphic.width/scale) + 150, (graphic.height/10)*2, sprites.quit:getWidth(), sprites.quit:getHeight()}
    }
 end
 
