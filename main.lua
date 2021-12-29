@@ -33,7 +33,6 @@ function love.load()
     Game:load()
     Background:load()
     Player:load()
-    Enemy.loadAssets()
     Meteor.loadAssets()
     Shot.loadAssets()
     GUI:load()
@@ -52,7 +51,6 @@ function love.load()
     winSound:setVolume(0.4)
 
     loadMeteors()
-    loadEnemies()
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -137,7 +135,7 @@ function love.draw()
     Buttons:draw()
 
     love.graphics.setFont(love.graphics.newFont(40))
-    love.graphics.print(Game.score, game.width - 70, 10)
+    love.graphics.print(Game.score, Game.width - 70, 10)
 end
 
 function shoot()
@@ -146,18 +144,11 @@ function shoot()
     end
 end
 
-function loadEnemies()
-    Enemy.removeAll()
-    for i = 1, 100 do
-        Enemy.new(game.width + start * i, game.height - 123)
-    end
-end
-
 function loadMeteors()
     Meteor.removeAll()
 
     for i = 1, 100 do
-        Meteor.new(love.math.random(0, game.width), -62)
+        Meteor.new(love.math.random(0, Game.width), -62)
     end
 end
 
