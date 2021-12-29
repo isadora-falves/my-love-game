@@ -50,6 +50,10 @@ function love.load()
     remaining_time = StartingTime
     gameover = false
 
+    theme = love.audio.newSource("sounds/theme.wav", "static")
+    theme:setVolume(0.4)
+    theme:play()
+
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
     hitSound:setVolume(0.4)
 
@@ -66,6 +70,7 @@ end
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
     if gameover then
+        theme:stop()
         Buttons:load()
         return
     end
@@ -160,6 +165,7 @@ function loadEnemies()
 end
 
 function reset()
+    theme:play()
     game.score = 0
     Player:load()
     GUI:load(Player)
