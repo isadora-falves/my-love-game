@@ -121,9 +121,9 @@ function love.draw()
 
     love.graphics.setFont(love.graphics.newFont(40))
     love.graphics.setColor(0, 0, 0, 0.5)
-    love.graphics.print(Game.score, Game.width - 68, 10)
+    love.graphics.print(Game.score, Game.width - 98, 10)
     love.graphics.setColor(1, 1, 1, 1)
-    love.graphics.print(Game.score, Game.width - 70, 10)
+    love.graphics.print(Game.score, Game.width - 100, 10)
 end
 
 function shoot()
