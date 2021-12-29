@@ -7,7 +7,7 @@ local GUI = require("gui")
 local Enemy = require("enemy")
 local Shot = require("shot")
 local Buttons = require("buttons")
-local Meteor =  require("meteor")
+local Meteor = require("meteor")
 
 life = 1
 
@@ -169,10 +169,11 @@ function loadEnemies()
 end
 
 function loadMeteors()
-  Meteor.removeAll()
-  for i = 1,100 do
-    Meteor.new(love.math.random(0, game.width), 0)
-  end
+    Meteor.removeAll()
+
+    for i = 1, 100 do
+        Meteor.new(love.math.random(0, game.width), -62)
+    end
 end
 
 function reset()

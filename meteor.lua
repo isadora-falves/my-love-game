@@ -18,15 +18,13 @@ function Meteor.new(x, y)
     instance.velx = 200
     instance.vely = -460
     instance.gravity = -660
-    instance.ground = love.graphics.getHeight() - 30
+    instance.ground = love.graphics.getHeight() - 62
 
     table.insert(ActiveMeteors, instance)
 end
 
 function Meteor.loadAssets()
-    -- love.graphics.print("olaaa", game.width - 70, 10)
-
-    Meteor.sprite = love.graphics.newImage("sprites/player.png")
+    Meteor.sprite = love.graphics.newImage("sprites/meteor.png")
 
     Meteor.width = Meteor.sprite:getWidth()
     Meteor.height = Meteor.sprite:getHeight()
@@ -64,8 +62,7 @@ function Meteor.getEnemies()
 end
 
 function Meteor:draw()
-    love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", self.x, self.y, 30, 30)
+    love.graphics.draw(self.sprite, self.x, self.y)
 end
 
 function Meteor.drawAll()
