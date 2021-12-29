@@ -65,8 +65,8 @@ function love.load()
     winSound:setVolume(0.4)
     start = game.width
 
-    loadEnemies()
     loadMeteors()
+    loadEnemies()
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -171,7 +171,7 @@ end
 function loadMeteors()
   Meteor.removeAll()
   for i = 1,100 do
-    Meteor.new(game.width + start*i, game.height - 123)
+    Meteor.new(love.math.random(0, game.width), 0)
   end
 end
 

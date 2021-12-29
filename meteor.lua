@@ -15,15 +15,17 @@ function Meteor.new(x, y)
 
     instance.x = x
     instance.y = y
-    instance.xvel = 200
-    instance.yvel = 0
-    instance.friction = 1
-    instance.speed = 2
+    instance.velx = 200
+    instance.vely = -460
+    instance.gravity = -660
+    instance.ground = love.graphics.getHeight() - 30
 
     table.insert(ActiveMeteors, instance)
 end
 
 function Meteor.loadAssets()
+    -- love.graphics.print("olaaa", game.width - 70, 10)
+
     Meteor.sprite = love.graphics.newImage("sprites/player.png")
 
     Meteor.width = Meteor.sprite:getWidth()
@@ -31,11 +33,15 @@ function Meteor.loadAssets()
 end
 
 function Meteor:physics(dt)
-    if self.x + self.width > 0 then
-        self.x = self.x - self.xvel * dt
-        self.y = self.y - self.yvel * dt
-        self.xvel = self.xvel * (1 - math.min(dt * self.friction, 0))
-        self.yvel = self.yvel * (1 - math.min(dt * self.friction, 1))
+    print(self.x)
+    if self.vely ~= 0 then
+        self.y = self.y + self.vely * dt
+        self.vely = self.vely - self.gravity * dt
+    end
+
+    if self.y > self.ground then
+        self.vely = 0
+        self.y = self.ground
     end
 end
 
@@ -59,7 +65,7 @@ end
 
 function Meteor:draw()
     love.graphics.setColor(255, 255, 255)
-    love.graphics.circle("fill", 50, 50, 30, 30)
+    love.graphics.circle("fill", self.x, self.y, 30, 30)
 end
 
 function Meteor.drawAll()
