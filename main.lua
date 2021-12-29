@@ -155,6 +155,7 @@ function shoot()
 end
 
 function reset()
+    game.score = 0
     Player:load()
     GUI:load(Player)
     remaining_time = StartingTime
