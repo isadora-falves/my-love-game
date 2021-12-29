@@ -19,7 +19,8 @@ local EnemiesList = {
 		damage = 2,
 		sprite = "sprites/dyno.png",
 		points = 10,
-		fly = false
+		fly = false,
+		sound = "sounds/dinoSound.wav"
 	},
 	miniDyno = {
 		xvel = 500,
@@ -28,7 +29,8 @@ local EnemiesList = {
 		speed = 10,
 		damage = 1,
 		sprite = "sprites/miniDyno.png",
-		fly = false
+		fly = false,
+		sound = "sounds/miniDyno.wav"
 	},
 	triceratops = {
 		xvel = 300,
@@ -38,7 +40,8 @@ local EnemiesList = {
 		damage = 3,
 		sprite = "sprites/triceratops.png",
 		points = 30,
-		fly = false
+		fly = false,
+	sound = "sounds/triceratops.wav"
 	},
 	health = {
 		xvel = 600,
@@ -83,6 +86,11 @@ function Enemy.new(x, y)
 	instance.points = enemy.points
 	instance.damage = enemy.damage
 	instance.crashed = false
+	if enemy.sound then
+		instance.sound = love.audio.newSource(enemy.sound, "static")
+		instance.sound:setVolume(0.4)
+		instance.sound:play()
+	end
 
 	table.insert(ActiveEnemies, instance)
 end
