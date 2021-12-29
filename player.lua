@@ -6,7 +6,7 @@ function Player:load()
     jumpSound = love.audio.newSource("sounds/jump.wav", "static")
     jumpSound:setVolume(0.4)
 
-    self.width = 100
+    self.width = 71
     self.height = 110
     self.x = 0
     self.y = love.graphics.getHeight() - self.height

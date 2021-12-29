@@ -15,8 +15,6 @@ function Enemy.new(x, y)
 
     instance.x = x
     instance.y = y
-    instance.width = 100
-    instance.height = 100
     instance.xvel = 200
     instance.yvel = 0
     instance.friction = 1

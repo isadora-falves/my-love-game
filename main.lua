@@ -57,7 +57,7 @@ function love.load()
     winSound = love.audio.newSource("sounds/win.wav", "static")
     winSound:setVolume(0.4)
 
-    Enemy.new(game.width, game.height - 166)
+    Enemy.new(game.width, game.height - 123)
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
