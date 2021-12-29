@@ -7,6 +7,7 @@ local Game = require("game")
 local utils = require("utils")
 
 local ActiveMeteors = {}
+local timer = 0
 
 function Meteor.removeAll()
     ActiveMeteors = {}
@@ -70,6 +71,14 @@ function Meteor:update(dt, index)
 end
 
 function Meteor.updateAll(dt)
+    timer = timer + dt
+
+    if timer > 1 then
+        Meteor.new(love.math.random(0, game.width), -62)
+
+        timer = 0
+    end
+
     for i, instance in ipairs(ActiveMeteors) do
         instance:update(dt, i)
     end

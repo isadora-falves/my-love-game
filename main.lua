@@ -47,8 +47,6 @@ function love.load()
 
     winSound = love.audio.newSource("sounds/win.wav", "static")
     winSound:setVolume(0.4)
-
-    loadMeteors()
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -127,15 +125,6 @@ function shoot()
     end
 end
 
-function loadMeteors()
-    Meteor.removeAll()
-
-    for i = 1, 100 do
-        Meteor.new(love.math.random(0, game.width), -62)
-
-    end
-end
-
 function reset()
     theme:play()
     Game:newGame()
@@ -144,7 +133,6 @@ function reset()
     Enemy.removeAll()
     Meteor.removeAll()
     Buttons:reset()
-    loadMeteors()
 end
 
 function love.mousepressed(mx, my, button)
