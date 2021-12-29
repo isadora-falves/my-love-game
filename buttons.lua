@@ -16,12 +16,6 @@ local sprites = {
 }
 
 function Buttons:start()
-    -- self.buttons = {
-    --     logo = {graphic.width / scale - 80, (graphic.height / 10) * 2 - 100, sprites.logo:getWidth(),
-    --             sprites.logo:getHeight()},
-    --     play = {graphic.width / scale, (graphic.height / 10) * 2 + 30, sprites.play:getWidth(), sprites.play:getHeight()}
-    -- }
-
     graphic = {
         width = love.graphics.getWidth(),
         height = love.graphics.getHeight()
