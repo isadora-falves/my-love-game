@@ -34,6 +34,9 @@ function Buttons:draw()
       end
 
       for i,v in pairs(self.buttons) do
+         love.graphics.setColor(0, 0, 0, 0.5)
+         love.graphics.draw(sprites[i], v[1] + 2, v[2])
+         love.graphics.setColor(1, 1, 1, 1)
          love.graphics.draw(sprites[i], v[1], v[2])
       end
 end
