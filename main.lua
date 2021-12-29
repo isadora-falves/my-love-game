@@ -62,21 +62,6 @@ function love.update(dt)
     -- checa colisão entro o jogador e o inimigo
     Player:decrementCollisionTimeout()
 
-    for pos, enemy in ipairs(Enemy.getEnemies()) do
-        if utils.check_collision(Player, enemy) then
-            if Player:damage(enemy) then
-                hitSound:play()
-            end
-
-            if Player:dead() then
-                hitSound:play()
-
-                Game:gameOver()
-                gameoverSound:play()
-            end
-        end
-    end
-
     Game:update(dt)
 
     if Game.remaining_play_time <= 0 then
@@ -146,7 +131,8 @@ function loadMeteors()
     Meteor.removeAll()
 
     for i = 1, 100 do
-        Meteor.new(love.math.random(0, game.width), -62 * i)
+        Meteor.new(love.math.random(0, game.width), -62)
+
     end
 end
 

@@ -3,6 +3,8 @@ local Meteor = {}
 Meteor.__index = Meteor
 
 local Player = require("player")
+local Game = require("game")
+local utils = require("utils")
 
 local ActiveMeteors = {}
 
@@ -16,9 +18,10 @@ function Meteor.new(x, y)
     instance.x = x
     instance.y = y
     instance.velx = 200
-    instance.vely = -460
-    instance.gravity = -660
+    instance.vely = -100
+    instance.gravity = -400
     instance.ground = love.graphics.getHeight() - 62
+    instance.damage = 3
 
     table.insert(ActiveMeteors, instance)
 end
@@ -30,7 +33,7 @@ function Meteor.loadAssets()
     Meteor.height = Meteor.sprite:getHeight()
 end
 
-function Meteor:physics(dt)
+function Meteor:physics(dt, index)
     if self.vely ~= 0 then
         self.y = self.y + self.vely * dt
         self.vely = self.vely - self.gravity * dt
@@ -39,16 +42,36 @@ function Meteor:physics(dt)
     if self.y > self.ground then
         self.vely = 0
         self.y = self.ground
+
+        self.remove(index)
     end
 end
 
-function Meteor:update(dt)
-    self:physics(dt)
+function Meteor:collision(index)
+    if utils.check_collision(Player, self) then
+        if Player:damage(self) then
+            hitSound:play()
+        end
+
+        if Player:dead() then
+            hitSound:play()
+
+            Game:gameOver()
+            gameoverSound:play()
+        end
+
+        self.remove(index)
+    end
+end
+
+function Meteor:update(dt, index)
+    self:physics(dt, index)
+    self:collision(index)
 end
 
 function Meteor.updateAll(dt)
     for i, instance in ipairs(ActiveMeteors) do
-        instance:update(dt)
+        instance:update(dt, i)
     end
 end
 

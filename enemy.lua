@@ -3,12 +3,12 @@ local Enemy = {}
 Enemy.__index = Enemy
 
 local Player = require("player")
+local Game = require("game")
+local utils = require("utils")
 
 local ActiveEnemies = {}
 
 local timer = 0
-
-local Game = require("game")
 
 local EnemiesList = {
     dyno = {
@@ -77,16 +77,32 @@ function Enemy:physics(dt)
     end
 end
 
+function Enemy:collision(dt)
+    if utils.check_collision(Player, self) then
+        if Player:damage(self) then
+            hitSound:play()
+        end
+
+        if Player:dead() then
+            hitSound:play()
+
+            Game:gameOver()
+            gameoverSound:play()
+        end
+    end
+end
+
 function Enemy:update(dt)
     self:physics(dt)
+    self:collision(dt)
 end
 
 function Enemy.updateAll(dt)
     timer = timer + dt
-	if timer > 1 then
+    if timer > 1 then
         Enemy.new(Game.width, Game.height)
-		timer = 0
-	end
+        timer = 0
+    end
 
     for i, instance in ipairs(ActiveEnemies) do
         instance:update(dt)
