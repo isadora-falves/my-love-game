@@ -64,7 +64,7 @@ function love.update(dt)
 
     for pos, enemy in ipairs(Enemy.getEnemies()) do
         if utils.check_collision(Player, enemy) then
-            if Player:damage() then
+            if Player:damage(enemy) then
                 hitSound:play()
             end
 
