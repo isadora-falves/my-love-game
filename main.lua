@@ -60,9 +60,7 @@ function love.load()
     winSound:setVolume(0.4)
     start = game.width
 
-    for i = 1,100 do
-        Enemy.new(game.width + start*i, game.height - 123)
-    end
+    loadEnemies()
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -154,6 +152,13 @@ function shoot()
     end
 end
 
+function loadEnemies()
+    Enemy.removeAll()
+    for i = 1,100 do
+        Enemy.new(game.width + start*i, game.height - 123)
+    end
+end
+
 function reset()
     game.score = 0
     Player:load()
@@ -162,6 +167,7 @@ function reset()
     gameover = false
     Enemy.removeAll()
     Buttons:reset()
+    loadEnemies()
 end
 
 function love.mousepressed(mx, my, button)
