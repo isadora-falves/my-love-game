@@ -57,10 +57,10 @@ function love.load()
     winSound = love.audio.newSource("sounds/win.wav", "static")
     winSound:setVolume(0.4)
     start = game.width
-    
+
     for i = 1,100 do
-        Enemy.new(game.width + start*i, game.height - 166)    
-    end  
+        Enemy.new(game.width + start*i, game.height - 123)
+    end
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -92,9 +92,6 @@ function love.update(dt)
 
     if remaining_time <= 0 then
         gameover = true
-        -- VIR A MENSAGEM DE GANHOU
-        -- colocar o bichinho pulando
-        -- Botão de jogar novamente
         winSound:play()
     end
 
