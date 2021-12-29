@@ -79,7 +79,7 @@ function Meteor.updateAll(dt)
     timer = timer + dt
 
     if timer > 1 then
-        Meteor.new(love.math.random(game.width / 2.75, game.width * 1.5), -62)
+        Meteor.new(love.math.random(Game.width / 2.75, Game.width * 1.5), -62)
 
         timer = 0
     end

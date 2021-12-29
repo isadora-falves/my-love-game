@@ -11,13 +11,6 @@ local Game = require("game")
 
 local utils = require("utils")
 
-game = {
-    width = 843,
-    height = 316,
-    scale = 2,
-    score = 0
-}
-
 started = false
 
 -- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
@@ -35,11 +28,11 @@ function love.load()
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
     hitSound:setVolume(0.4)
 
-	powerUp = love.audio.newSource("sounds/powerUp.wav", "static")
-	powerUp:setVolume(0.4)
+    powerUp = love.audio.newSource("sounds/powerUp.wav", "static")
+    powerUp:setVolume(0.4)
 
-	gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
-	gameoverSound:setVolume(0.4)
+    gameoverSound = love.audio.newSource("sounds/gameover.wav", "static")
+    gameoverSound:setVolume(0.4)
 
     winSound = love.audio.newSource("sounds/win.wav", "static")
     winSound:setVolume(0.4)
@@ -53,8 +46,8 @@ function love.update(dt)
         return
     end
 
-    --evitar que o jogo fique muito rápido
-    dt = math.min(dt, 1/60)
+    -- evitar que o jogo fique muito rápido
+    dt = math.min(dt, 1 / 60)
 
     if Game:gameFinished() then
         Buttons:load()
@@ -77,16 +70,16 @@ function love.update(dt)
 
     for shotIndex, shot in ipairs(Shot.getShots()) do
         for enemyIndex, enemy in ipairs(Enemy.getEnemies()) do
-					if enemy.damage >= 0 then
-            if utils.check_collision(shot, enemy) then
-                hitSound:play()
+            if enemy.damage >= 0 then
+                if utils.check_collision(shot, enemy) then
+                    hitSound:play()
 
-                Shot.remove(shotIndex)
+                    Shot.remove(shotIndex)
 
-                Enemy.remove(enemyIndex)
-                Game:addScore(enemy.points)
+                    Enemy.remove(enemyIndex)
+                    Game:addScore(enemy.points)
+                end
             end
-					end
         end
 
         -- remove tiro da listagem quando ele toca na borda da tela
