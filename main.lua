@@ -15,8 +15,10 @@ StartingTime = 40
 game = {
     width = 843,
     height = 316,
-    scale = 1
+    scale = 1,
+    score = 0
 }
+
 
 function checkCollision(a, b)
     -- não-colisão no eixo x
@@ -108,6 +110,8 @@ function love.update(dt)
                 Shot.remove(shotIndex)
 
                 Enemy.remove(enemyIndex)
+
+                game.score = game.score + 10
             end
         end
 
@@ -139,6 +143,9 @@ function love.draw()
     GUI:draw(Player)
 
     Buttons:draw()
+
+    love.graphics.setFont(love.graphics.newFont(40))
+    love.graphics.print(game.score)
 end
 
 function shoot()
