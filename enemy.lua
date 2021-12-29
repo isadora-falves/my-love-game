@@ -46,7 +46,7 @@ local EnemiesList = {
 		friction = 1,
 		speed = 8,
 		damage = -1,
-		sprite = "sprites/beer.png",
+		sprite = "sprites/meat.png",
 		points = 0,
 		fly = true
 	}
