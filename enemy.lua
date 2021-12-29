@@ -6,6 +6,44 @@ local Player = require("player")
 
 local ActiveEnemies = {}
 
+local timer = 0
+
+local Game = require("game")
+
+local EnemiesList = {
+    dyno = {
+        xvel = 200,
+        yvel = 0,
+        friction = 1,
+        speed = 4,
+        damage = 2,
+        sprite = "sprites/dyno.png",
+        points = 10
+    },
+    miniDyno = {
+        xvel = 500,
+        yvel = 0,
+        friction = 1,
+        speed = 10,
+        damage = 1,
+        sprite = "sprites/miniDyno.png"
+    },
+    triceratops = {
+        xvel = 300,
+        yvel = 0,
+        friction = 1,
+        speed = 3,
+        damage = 3,
+        sprite = "sprites/triceratops.png",
+        points = 30
+    }
+}
+
+local keyset = {}
+for k in pairs(EnemiesList) do
+    table.insert(keyset, k)
+end
+
 function Enemy.removeAll()
     ActiveEnemies = {}
 end
@@ -13,21 +51,21 @@ end
 function Enemy.new(x, y)
     local instance = setmetatable({}, Enemy)
 
+    local enemy = EnemiesList[keyset[math.random(#keyset)]]
+
+    instance.sprite = love.graphics.newImage(enemy.sprite)
+    instance.width = instance.sprite:getWidth()
+    instance.height = instance.sprite:getHeight()
     instance.x = x
-    instance.y = y
-    instance.xvel = 200
-    instance.yvel = 0
-    instance.friction = 1
-    instance.speed = 2
+    instance.y = y - instance.height
+    instance.xvel = enemy.xvel
+    instance.yvel = enemy.yvel
+    instance.friction = enemy.friction
+    instance.speed = enemy.speed
+    instance.points = enemy.points
+    instance.damage = enemy.damage
 
     table.insert(ActiveEnemies, instance)
-end
-
-function Enemy.loadAssets()
-    Enemy.sprite = love.graphics.newImage("sprites/dyno.png")
-
-    Enemy.width = Enemy.sprite:getWidth()
-    Enemy.height = Enemy.sprite:getHeight()
 end
 
 function Enemy:physics(dt)
@@ -44,6 +82,12 @@ function Enemy:update(dt)
 end
 
 function Enemy.updateAll(dt)
+    timer = timer + dt
+	if timer > 1 then
+        Enemy.new(Game.width, Game.height)
+		timer = 0
+	end
+
     for i, instance in ipairs(ActiveEnemies) do
         instance:update(dt)
     end

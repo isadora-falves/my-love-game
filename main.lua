@@ -8,17 +8,9 @@ local Enemy = require("enemy")
 local Shot = require("shot")
 local Buttons = require("buttons")
 local Meteor = require("meteor")
+local Game = require("game")
 
 life = 1
-
-StartingTime = 40
-
-game = {
-    width = 843,
-    height = 316,
-    scale = 1,
-    score = 0
-}
 
 function checkCollision(a, b)
     -- não-colisão no eixo x
@@ -38,18 +30,13 @@ end
 
 -- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
 function love.load()
-    love.window.setMode(game.width * game.scale, game.height * game.scale)
-
+    Game:load()
     Background:load()
     Player:load()
     Enemy.loadAssets()
     Meteor.loadAssets()
     Shot.loadAssets()
-
     GUI:load()
-
-    remaining_time = StartingTime
-    gameover = false
 
     theme = love.audio.newSource("sounds/theme.wav", "static")
     theme:setVolume(0.1)
@@ -63,7 +50,6 @@ function love.load()
 
     winSound = love.audio.newSource("sounds/win.wav", "static")
     winSound:setVolume(0.4)
-    start = game.width
 
     loadMeteors()
     loadEnemies()
@@ -71,9 +57,9 @@ end
 
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
-    if gameover then
-        theme:stop()
+    if Game:gameFinished() then
         Buttons:load()
+        theme:stop()
         return
     end
 
@@ -82,23 +68,23 @@ function love.update(dt)
 
     for pos, enemy in ipairs(Enemy.getEnemies()) do
         if checkCollision(Player, enemy) then
-            if Player:damage() then
+            if Player:damage(enemy) then
                 hitSound:play()
             end
 
             if Player:dead() then
                 hitSound:play()
 
-                gameover = true
+                Game:gameOver()
                 gameoverSound:play()
             end
         end
     end
 
-    remaining_time = remaining_time - dt
+    Game:update(dt)
 
-    if remaining_time <= 0 then
-        gameover = true
+    if Game.remaining_play_time <= 0 then
+        Game:gameOver()
         winSound:play()
     end
 
@@ -116,13 +102,12 @@ function love.update(dt)
                 Shot.remove(shotIndex)
 
                 Enemy.remove(enemyIndex)
-
-                game.score = game.score + 10
+                Game:addScore(enemy.points)
             end
         end
 
         -- remove tiro da listagem quando ele toca na borda da tela
-        if shot.x >= game.width then
+        if shot.x >= Game.width then
             Shot.remove(shotIndex)
         end
     end
@@ -152,11 +137,11 @@ function love.draw()
     Buttons:draw()
 
     love.graphics.setFont(love.graphics.newFont(40))
-    love.graphics.print(game.score, game.width - 70, 10)
+    love.graphics.print(Game.score, game.width - 70, 10)
 end
 
 function shoot()
-    if not gameover then
+    if not Game:gameFinished() then
         Shot.new(Player.x + Player.width, Player.y + Player.height / 2)
     end
 end
@@ -178,11 +163,9 @@ end
 
 function reset()
     theme:play()
-    game.score = 0
+    Game:newGame()
     Player:load()
     GUI:load(Player)
-    remaining_time = StartingTime
-    gameover = false
     Enemy.removeAll()
     Meteor.removeAll()
     Buttons:reset()

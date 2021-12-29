@@ -92,10 +92,10 @@ function Player:tintRed()
     self.colors.blue = 0
 end
 
-function Player:damage()
+function Player:damage(enemy)
     if self:validCollission() then
         self:resetCollissionTimeout()
-        self.health.current = self.health.current - 1
+        self.health.current = self.health.current - enemy.damage
         self:tintRed()
         return true
     else
@@ -110,7 +110,7 @@ function Player:validCollission()
 end
 
 function Player:dead()
-    isDead = self.health.current == 0
+    isDead = self.health.current <= 0
 
     return isDead
 end
