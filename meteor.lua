@@ -18,7 +18,7 @@ function Meteor.new(x, y)
 
     instance.x = x
     instance.y = y
-    instance.velx = 200
+    instance.velx = -60
     instance.vely = -100
     instance.gravity = -400
     instance.ground = love.graphics.getHeight() - 62
@@ -37,11 +37,15 @@ end
 function Meteor:physics(dt, index)
     if self.vely ~= 0 then
         self.y = self.y + self.vely * dt
+        self.x = self.x + self.velx * dt
+
         self.vely = self.vely - self.gravity * dt
+        self.velx = self.velx + self.gravity * dt
     end
 
     if self.y > self.ground then
         self.vely = 0
+        self.velx = 0
         self.y = self.ground
 
         self.remove(index)
@@ -50,9 +54,9 @@ end
 
 function Meteor:collision(index)
     if utils.check_collision(Player, self) then
-        if Player:damage(self) then
-            hitSound:play()
-        end
+        Player:damage(self)
+
+        hitSound:play()
 
         if Player:dead() then
             hitSound:play()
@@ -73,8 +77,8 @@ end
 function Meteor.updateAll(dt)
     timer = timer + dt
 
-    if timer > 1 then
-        Meteor.new(love.math.random(0, game.width), -62)
+    if timer > 0.8 then
+        Meteor.new(love.math.random(game.width / game.width * 0.75, game.width * 2), -62)
 
         timer = 0
     end
@@ -93,7 +97,7 @@ function Meteor.getEnemies()
 end
 
 function Meteor:draw()
-    love.graphics.draw(self.sprite, self.x, self.y)
+    love.graphics.draw(self.sprite, self.x, self.y, 0.785398)
 end
 
 function Meteor.drawAll()
