@@ -158,6 +158,7 @@ function reset()
     Enemy.removeAll()
     Meteor.removeAll()
     Buttons:reset()
+    loadMeteors()
 end
 
 function love.mousepressed(mx, my, button)
