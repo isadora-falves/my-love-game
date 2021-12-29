@@ -22,6 +22,8 @@ game = {
     score = 0
 }
 
+started = false
+
 timer = 0
 
 life = 1
@@ -37,7 +39,6 @@ function love.load()
 
     theme = love.audio.newSource("sounds/theme.wav", "static")
     theme:setVolume(0.1)
-    theme:play()
 
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
     hitSound:setVolume(0.4)
@@ -51,6 +52,11 @@ end
 
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
+    if not started then
+        Buttons:start()
+
+        return
+    end
     if Game:gameFinished() then
         Buttons:load()
         theme:stop()
@@ -137,7 +143,8 @@ function love.mousepressed(mx, my, button)
         for i, v in pairs(Buttons:listButtons()) do
             -- check collision and restrict allowed repeat click speed
             if mx >= v[1] and mx <= v[1] + v[3] and my >= v[2] and my <= v[2] + v[4]  then
-                if i == "continue" then
+                if i == "continue" or i == "play" then
+                    started = true
                     reset()
                 elseif i == "quit" then
                     love.event.quit()
