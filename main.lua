@@ -143,7 +143,7 @@ function love.draw()
     Buttons:draw()
 
     love.graphics.setFont(love.graphics.newFont(40))
-    love.graphics.print(game.score)
+    love.graphics.print(game.score, game.width - 70, 10)
 end
 
 function shoot()
