@@ -7,6 +7,7 @@ local GUI = require("gui")
 local Enemy = require("enemy")
 local Shot = require("shot")
 local Buttons = require("buttons")
+local Meteor =  require("meteor")
 
 life = 1
 
@@ -43,6 +44,7 @@ function love.load()
     Background:load()
     Player:load()
     Enemy.loadAssets()
+    Meteor.loadAssets()
     Shot.loadAssets()
 
     GUI:load()
@@ -61,6 +63,7 @@ function love.load()
     start = game.width
 
     loadEnemies()
+    loadMeteors()
 end
 
 -- Aqui fica todo o código que atualiza algo na tela
@@ -98,6 +101,7 @@ function love.update(dt)
     Background:update(dt)
     Player:update(dt)
     Enemy.updateAll(dt)
+    Meteor.updateAll(dt)
     Shot.updateAll(dt)
 
     for shotIndex, shot in ipairs(Shot.getShots()) do
@@ -136,6 +140,7 @@ function love.draw()
     Background:draw()
     Player:draw()
     Enemy.drawAll()
+    Meteor.drawAll()
     Shot.drawAll()
 
     GUI:draw(Player)
@@ -159,6 +164,13 @@ function loadEnemies()
     end
 end
 
+function loadMeteors()
+  Meteor.removeAll()
+  for i = 1,100 do
+    Meteor.new(game.width + start*i, game.height - 123)
+  end
+end
+
 function reset()
     game.score = 0
     Player:load()
@@ -166,6 +178,7 @@ function reset()
     remaining_time = StartingTime
     gameover = false
     Enemy.removeAll()
+    Meteor.removeAll()
     Buttons:reset()
     loadEnemies()
 end
