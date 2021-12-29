@@ -139,7 +139,7 @@ function love.mousepressed(mx, my, button)
     if button == 1 then -- checks which button was pressed, refer to [url=https://love2d.org/wiki/love.mousepressed]wiki[/url]
         for i, v in pairs(Buttons:listButtons()) do
             -- check collision and restrict allowed repeat click speed
-            if mx >= v[1] and mx <= v[1] + v[3] and my >= v[2] and my <= v[2] + v[4] then
+            if mx >= v.x and mx <= v.x + v.width and my >= v.y and my <= v.y + v.height then
                 if i == "continue" or i == "play" then
                     started = true
                     reset()
