@@ -20,7 +20,6 @@ game = {
     score = 0
 }
 
-
 function checkCollision(a, b)
     -- não-colisão no eixo x
     if b.x > a.x + a.width or a.x > b.x + b.width then
@@ -52,6 +51,10 @@ function love.load()
     remaining_time = StartingTime
     gameover = false
 
+    theme = love.audio.newSource("sounds/theme.wav", "static")
+    theme:setVolume(0.4)
+    theme:play()
+
     hitSound = love.audio.newSource("sounds/hit.wav", "static")
     hitSound:setVolume(0.4)
 
@@ -69,6 +72,7 @@ end
 -- Aqui fica todo o código que atualiza algo na tela
 function love.update(dt)
     if gameover then
+        theme:stop()
         Buttons:load()
         return
     end
@@ -153,14 +157,14 @@ end
 
 function shoot()
     if not gameover then
-        Shot.new(Player.x + Player.width, Player.y + Player.width / 3)
+        Shot.new(Player.x + Player.width, Player.y + Player.height / 2)
     end
 end
 
 function loadEnemies()
     Enemy.removeAll()
-    for i = 1,100 do
-        Enemy.new(game.width + start*i, game.height - 123)
+    for i = 1, 100 do
+        Enemy.new(game.width + start * i, game.height - 123)
     end
 end
 
@@ -172,6 +176,7 @@ function loadMeteors()
 end
 
 function reset()
+    theme:play()
     game.score = 0
     Player:load()
     GUI:load(Player)
