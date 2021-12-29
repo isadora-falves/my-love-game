@@ -1,13 +1,28 @@
 local Buttons = {}
+
 local graphic = {
    width = love.graphics.getWidth(),
    height = love.graphics.getHeight()
 }
 
+local sprites = {
+   playagain = love.graphics.newImage("sprites/play_again.png"),
+   play = love.graphics.newImage("sprites/play.png"),
+   continue = love.graphics.newImage("sprites/yes.png"),
+   quit = love.graphics.newImage("sprites/no.png")
+}
+
+function Buttons:start()
+   self.buttons = {
+      play = {graphic.width/3 + 30, (graphic.height/10)*2 - 100, 30, 30}
+   }
+end
+
 function Buttons:load()
    self.buttons = {
-      continue = {graphic.width/3 + 60, (graphic.height/10)*2, graphic.width/10, (graphic.height/10)*2, 0}, -- left (left edge, top edge, width, height, timer)
-      quit = {(graphic.width/3) + 150, (graphic.height/10)*2, graphic.width/10, (graphic.height/10)*2, 0} -- right
+      playagain = {graphic.width/3 + 30, (graphic.height/10)*2 - 100, sprites.playagain:getWidth(), sprites.playagain:getHeight()},
+      continue = {graphic.width/3 - 30, (graphic.height/10)*2, 144, sprites.continue:getWidth(), sprites.continue:getHeight()},
+      quit = {(graphic.width/3) + 180, (graphic.height/10)*2, sprites.quit:getWidth(), sprites.quit:getHeight()}
    }
 end
 
@@ -15,11 +30,9 @@ function Buttons:draw()
       if self.buttons == nil then
          return
       end
-      
-      for i,v in pairs(self.buttons) do 
-            opacity = 100 + v[5] * 400 -- change opacity over time to indicate
-            love.graphics.setColor(255,255,255,opacity)
-            love.graphics.rectangle("fill",v[1],v[2],v[3],v[4])
+
+      for i,v in pairs(self.buttons) do
+         love.graphics.draw(sprites[i], v[1], v[2])
       end
 end
 
