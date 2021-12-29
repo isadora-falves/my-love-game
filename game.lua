@@ -6,7 +6,7 @@ function Game:load()
    self.height = 316
    self.scale = 1
    self.score = 0
-   self.gameover = false
+   self.gameover = true
    self.remaining_play_time = 40
 
    love.window.setMode(self.width * self.scale, self.height * self.scale)

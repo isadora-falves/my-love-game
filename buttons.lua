@@ -6,6 +6,7 @@ local graphic = {
 }
 
 local sprites = {
+   logo = love.graphics.newImage("sprites/logo.png"),
    playagain = love.graphics.newImage("sprites/play_again.png"),
    play = love.graphics.newImage("sprites/play.png"),
    continue = love.graphics.newImage("sprites/yes.png"),
@@ -14,7 +15,8 @@ local sprites = {
 
 function Buttons:start()
    self.buttons = {
-      play = {graphic.width/3 + 30, (graphic.height/10)*2 - 100, 30, 30}
+      logo = {graphic.width/3 - 50, (graphic.height/10)*2 - 100, sprites.logo:getWidth(), sprites.logo:getHeight()},
+      play = {graphic.width/3 + 30, (graphic.height/10)*2 + 30, sprites.play:getWidth(), sprites.play:getHeight()}
    }
 end
 
@@ -40,7 +42,7 @@ function Buttons:listButtons()
    if self.buttons == nil then
       return {}
    end
-   
+
    return self.buttons
 end
 
