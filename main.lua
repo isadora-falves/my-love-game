@@ -2,12 +2,13 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 
 local Background = require("background")
 local Player = require("player")
-
-local GUI = require("gui")
 local Enemy = require("enemy")
 local Shot = require("shot")
 local Buttons = require("buttons")
 local Meteor = require("meteor")
+local GUI = require("gui")
+
+local utils = require("utils")
 
 life = 1
 
@@ -20,21 +21,7 @@ game = {
     score = 0
 }
 
-function checkCollision(a, b)
-    -- não-colisão no eixo x
-    if b.x > a.x + a.width or a.x > b.x + b.width then
-
-        return false
-    end
-
-    -- não-colisão no eixo y
-    if b.y > a.y + a.height or a.y > b.y + b.height then
-
-        return false
-    end
-
-    return true
-end
+timer = 0
 
 -- Aqui ficam todas as configurações iniciais e carregamento de imagens e audios
 function love.load()
@@ -81,7 +68,7 @@ function love.update(dt)
     Player:decrementCollisionTimeout()
 
     for pos, enemy in ipairs(Enemy.getEnemies()) do
-        if checkCollision(Player, enemy) then
+        if utils.check_collision(Player, enemy) then
             if Player:damage() then
                 hitSound:play()
             end
@@ -110,7 +97,7 @@ function love.update(dt)
 
     for shotIndex, shot in ipairs(Shot.getShots()) do
         for enemyIndex, enemy in ipairs(Enemy.getEnemies()) do
-            if checkCollision(shot, enemy) then
+            if utils.check_collision(shot, enemy) then
                 hitSound:play()
 
                 Shot.remove(shotIndex)
@@ -172,7 +159,7 @@ function loadMeteors()
     Meteor.removeAll()
 
     for i = 1, 100 do
-        Meteor.new(love.math.random(0, game.width), -62)
+        Meteor.new(love.math.random(0, game.width), -62 * i)
     end
 end
 

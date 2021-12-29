@@ -31,7 +31,6 @@ function Meteor.loadAssets()
 end
 
 function Meteor:physics(dt)
-    print(self.x)
     if self.vely ~= 0 then
         self.y = self.y + self.vely * dt
         self.vely = self.vely - self.gravity * dt
