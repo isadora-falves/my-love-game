@@ -64,6 +64,7 @@ function Enemy.new(x, y)
     instance.speed = enemy.speed
     instance.points = enemy.points
     instance.damage = enemy.damage
+    instance.crashed = false
 
     table.insert(ActiveEnemies, instance)
 end
@@ -78,17 +79,18 @@ function Enemy:physics(dt)
 end
 
 function Enemy:collision(dt)
-    if utils.check_collision(Player, self) then
-        if Player:damage(self) then
-            hitSound:play()
-        end
+    if utils.check_collision(Player, self) and not self.crashed then
+        hitSound:play()
+
+        Player:damage(self)
 
         if Player:dead() then
-            hitSound:play()
-
             Game:gameOver()
+
             gameoverSound:play()
         end
+
+        self.crashed = true
     end
 end
 

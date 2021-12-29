@@ -18,14 +18,13 @@ function Player:load()
     self.health = {
         current = 3
     }
+
     self.colors = {
         red = 1,
         green = 1,
         blue = 1,
         speed = 2
     }
-    self.collision_timeout = 1
-    self.defaultCollisionTimeout = 175
 end
 
 function Player:update(dt)
@@ -93,20 +92,9 @@ function Player:tintRed()
 end
 
 function Player:damage(enemy)
-    if self:validCollission() then
-        self:resetCollissionTimeout()
-        self.health.current = self.health.current - enemy.damage
-        self:tintRed()
-        return true
-    else
-        return false
-    end
-end
+    self.health.current = self.health.current - enemy.damage
 
-function Player:validCollission()
-    isValidCollission = self.collision_timeout < 0
-
-    return isValidCollission
+    self:tintRed()
 end
 
 function Player:dead()
@@ -122,14 +110,6 @@ function Player:untintPlayer(dt)
     colors.green = math.min(colors.green + speed * dt, 1)
     colors.blue = math.min(colors.blue + speed * dt, 1)
     colors.red = math.min(colors.red + speed * dt, 1)
-end
-
-function Player:resetCollissionTimeout()
-    self.collision_timeout = self.defaultCollisionTimeout
-end
-
-function Player:decrementCollisionTimeout()
-    self.collision_timeout = self.collision_timeout - 1
 end
 
 return Player

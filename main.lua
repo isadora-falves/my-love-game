@@ -57,9 +57,6 @@ function love.update(dt)
         return
     end
 
-    -- checa colisão entro o jogador e o inimigo
-    Player:decrementCollisionTimeout()
-
     Game:update(dt)
 
     if Game.remaining_play_time <= 0 then
