@@ -24,6 +24,10 @@ function Buttons:draw()
 end
 
 function Buttons:listButtons()
+   if self.buttons == nil then
+      return {}
+   end
+   
    return self.buttons
 end
 
